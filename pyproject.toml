@@ -1,0 +1,10 @@
+[project]
+name = "kiari-plugins"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "kiari>=0.1.0",
+    "kiarina>=2.14.0",
+]
