@@ -12,6 +12,12 @@
 #     user account         ->  nothing to sign with, so --service-account-id is required
 #   Application default credentials resolve to one of the first three, depending on the host.
 #
+#   --service-account-id does not impersonate: the credential still authenticates as itself and
+#   only borrows the named service account's key to sign one blob. It needs signBlob permission
+#   on that account, the same grant kiarina.lib.google's impersonate_service_account requires --
+#   configure that instead and the flag becomes unnecessary. Either way the minted token is
+#   issued as (iss / sub) that service account, because Firebase only trusts service account keys.
+#
 #   The examples below omit the `kiari ext -v --plugin ... firebase` prefix:
 #     login --uid kiarina --token-data-file-path ./.tmp/firebase/token.json
 #     login --uid kiarina --firebase-settings-key staging
