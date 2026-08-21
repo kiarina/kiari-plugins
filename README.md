@@ -60,28 +60,36 @@ Notes:
   `@kiarina/kiari-plugins/extension_command/asr.py@a1b2c3d`. Without it, `main` is used.
 - Every plugin file starts with a `# Usage:` comment block holding its own examples.
 
-## Refreshing the cache
+## Updating the plugins
 
 **A cached directory is served as-is: kiari does not re-check GitHub for it.** Once
 `@kiarina/kiari-plugins/extension_command/` has been resolved, later runs list the files
 already in `~/.cache/kiari/github_files/` and never learn about files added upstream.
-A command you know exists here simply will not be found. Pass `--github-ignore-cache`
-(or set `KIARI_GITHUB_IGNORE_CACHE=1`) to re-fetch:
+A command you know exists here simply will not be found.
+
+To pick up changes, clear the cache and let the next run re-fetch:
+
+```sh
+kiari admin clear-cache -f
+```
+
+That deletes kiari's whole cache directory, not just this repository's files. It is a
+cache, so nothing is lost beyond the next run being slower. Drop `-f` to see what would
+go and confirm first.
+
+`--github-ignore-cache` (or `KIARI_GITHUB_IGNORE_CACHE=1`) re-fetches for one run without
+clearing anything:
 
 ```sh
 kiari ext --github-ignore-cache asr --asr-model local ./sample.mp3
 ```
 
-Refreshing adds and overwrites, but never prunes. A plugin **deleted or renamed** upstream
-stays in the cache and keeps registering its command, so a stale copy can shadow a rename
-long after it is gone from this repository. Delete the cached directory to be sure:
+Prefer `clear-cache` when a plugin was **deleted or renamed** upstream. Re-fetching adds
+and overwrites but never prunes, so a stale file keeps registering its command and can
+shadow a rename long after it is gone from this repository.
 
-```sh
-rm -rf ~/.cache/kiari/github_files/kiarina/kiari-plugins
-```
-
-Pinning with `@<commit-hash>` does not help here — the cache path ignores the revision, so
-a pinned spec and `main` share one directory.
+Pinning with `@<commit-hash>` does not sidestep any of this — the cache path ignores the
+revision, so a pinned spec and `main` share one directory.
 
 ## Extension commands
 
