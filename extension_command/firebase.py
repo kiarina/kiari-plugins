@@ -1,9 +1,10 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/firebase.py" firebase login --project-id my-project --uid kiarina --token-file-path ./.tmp/firebase/token.json
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/firebase.py" firebase login --project-id my-project --uid kiarina
 #
 #   login mints a custom token with the credential that kiarina.lib.google resolves, exchanges
-#   it for a Firebase token set, and writes it to --token-file-path. Every other command that
-#   talks to Firebase reads the token set through token_manager_registry.
+#   it for a Firebase token set, and writes it to token_file_path in the kiarina.lib.firebase
+#   settings -- the same setting token_manager_registry reads from, so every other command
+#   that talks to Firebase picks it up. Set it, or login fails.
 #
 #   How the token gets signed depends on which credential kiarina.lib.google resolves:
 #     service account key  ->  signed locally with its private key
@@ -18,15 +19,14 @@
 #   configure that instead and the flag becomes unnecessary. Either way the minted token is
 #   issued as (iss / sub) that service account, because Firebase only trusts service account keys.
 #
-#   --project-id, --uid, and --token-file-path are all required: login states what it mints
-#   and where it lands instead of inheriting defaults. The readers do not share that path,
-#   so point token_file_path in the kiarina.lib.firebase settings
-#   (KIARINA_LIB_FIREBASE_TOKEN_FILE_PATH) at the same file.
+#   --project-id and --uid are required: they say what the token is minted as, and the
+#   settings have nowhere to hold them. Where it lands is not an argument, so that login
+#   and the readers cannot disagree about the path.
 #
 #   The examples below omit the `kiari ext -v --plugin ... firebase` prefix:
-#     login --project-id my-project --uid kiarina --token-file-path ./.tmp/firebase/token.json
-#     login --project-id my-project --uid kiarina --token-file-path ./.tmp/firebase/token.json --firebase-settings-key staging
-#     login --project-id my-project --uid kiarina --token-file-path ./.tmp/firebase/token.json --google-auth-settings-key user --service-account-id sa@my-project.iam.gserviceaccount.com
+#     login --project-id my-project --uid kiarina
+#     login --project-id my-project --uid kiarina --firebase-settings-key staging
+#     login --project-id my-project --uid kiarina --google-auth-settings-key user --service-account-id sa@my-project.iam.gserviceaccount.com
 import argparse
 import asyncio
 import logging
@@ -112,6 +112,16 @@ class FirebaseCommand(BaseExtensionCommand):
         firebase_auth_settings = firebase_auth_settings_manager.get_settings(
             options.firebase_settings_key
         )
+
+        if not firebase_auth_settings.token_file_path:
+            raise ValueError(
+                "No output path. Set token_file_path in the kiarina.lib.firebase settings "
+                "(KIARINA_LIB_FIREBASE_TOKEN_FILE_PATH); token_manager_registry reads the "
+                "token set back from there."
+            )
+
+        output_path = Path(firebase_auth_settings.token_file_path).expanduser()
+
         custom_token = await asyncio.to_thread(
             _create_custom_token, options, project_id=options.project_id
         )
@@ -120,7 +130,6 @@ class FirebaseCommand(BaseExtensionCommand):
             firebase_auth_settings.api_key.get_secret_value(),
         )
 
-        output_path = Path(options.token_file_path).expanduser()
         await FileTokenStore(str(output_path)).set(token)
 
         print(f"Logged in as: {options.uid}")
@@ -144,8 +153,7 @@ def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
     # fmt: off
     login_parser.add_argument("--project-id", required=True, help="Firebase project ID the custom token is minted for.")
     login_parser.add_argument("--uid", required=True, help="Firebase custom token UID.")
-    login_parser.add_argument("--token-file-path", required=True, help="Where to store the token set. Match token_file_path in the kiarina.lib.firebase settings so the readers find it.")
-    login_parser.add_argument("--firebase-settings-key", default=None, help="Settings key passed to kiarina.lib.firebase.settings_manager.get_settings.")
+    login_parser.add_argument("--firebase-settings-key", default=None, help="Settings key passed to kiarina.lib.firebase.settings_manager.get_settings. Supplies api_key and the token_file_path the token set is written to.")
     login_parser.add_argument("--google-auth-settings-key", default=None, help="Settings key passed to kiarina.lib.google.get_credentials.")
     login_parser.add_argument("--service-account-id", default=None, help="Service account email whose iam.serviceAccounts.signBlob permission signs the custom token. Needed only for user account credentials; service account keys, impersonation, and GCE metadata each resolve a signer on their own.")
     # fmt: on

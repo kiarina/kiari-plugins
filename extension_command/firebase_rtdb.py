@@ -3,8 +3,8 @@
 #
 #   Authentication is delegated to settings: kiarina.lib.firebase supplies api_key and
 #   token_file_path, and kiarina.lib.firebase_rtdb.firebase_settings_key selects which
-#   of them to use. Seed the token set with `kiari ext firebase login`, pointing its
-#   --token-file-path at the same file as token_file_path.
+#   of them to use. Seed the token set with `kiari ext firebase login`, which writes it to
+#   the same token_file_path.
 #
 #   The examples below omit the `kiari ext -v --plugin ... firebase-rtdb` prefix:
 #     get --database-url https://my-project.firebaseio.com --path /watch/test --output-file ./.tmp/rtdb/get.json

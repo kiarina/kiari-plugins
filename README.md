@@ -53,8 +53,8 @@ Notes:
 `firebase-rtdb` takes no token option: it resolves credentials through the
 `kiarina.lib.firebase` / `kiarina.lib.firebase_rtdb` settings. Configure `api_key` and
 `token_file_path` there, then seed the token set with
-`firebase login --project-id ... --uid ... --token-file-path ...`, pointing
-`--token-file-path` at the same file as `token_file_path`.
+`firebase login --project-id ... --uid ...`, which writes it to that same
+`token_file_path`.
 
 ## Optional dependencies
 
