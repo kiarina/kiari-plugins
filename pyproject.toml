@@ -29,6 +29,16 @@ imageio = [
 homepage = "https://github.com/kiarina/kiari-plugins"
 repository = "https://github.com/kiarina/kiari-plugins"
 
+# Resolve kiari / kiarina from the HEAD of their default branch rather than PyPI, so drift
+# shows up here before it reaches a release. uv.lock pins the commit, so this stays
+# reproducible; `make upgrade` moves it forward. Only this repository's own environment is
+# affected -- pip and anything consuming kiari-plugins see the specifiers above.
+# One entry covers all of kiarina: uv finds the workspace root from the checkout and
+# resolves every member package from the same commit.
+[tool.uv.sources]
+kiari = { git = "https://github.com/kiarina/kiari.git", branch = "main" }
+kiarina = { git = "https://github.com/kiarina/kiarina-python.git", subdirectory = "packages/kiarina", branch = "main" }
+
 [tool.mypy]
 python_version = "3.12"
 show_error_codes = true

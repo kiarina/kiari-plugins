@@ -1385,7 +1385,7 @@ wheels = [
 [[package]]
 name = "kiari"
 version = "0.2.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiari.git?branch=main#400906963c9dc9e08cc63e0a12fc468d5cdf74e8" }
 dependencies = [
     { name = "aiofiles" },
     { name = "aiohttp" },
@@ -1422,10 +1422,6 @@ dependencies = [
     { name = "uvicorn" },
     { name = "watchfiles" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a4/d7/d559883f3348679ef5efd68794957fee6fdeadd772b25192aced95f840ac/kiari-0.2.0.tar.gz", hash = "sha256:90e7eed5edc20e98ddba39e99b159ecdbcd935738958b6890f6d391e2b231d96", size = 211899, upload-time = "2026-08-20T16:50:07.289Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/25/39/d5b958095d132de1b80382be0e63a4629554b620c5442dd8af0d12043e92/kiari-0.2.0-py3-none-any.whl", hash = "sha256:012befc2fbea7953518d68a85d4bf2766519705e07a997ba5317eb5a820f5602", size = 352207, upload-time = "2026-08-20T16:50:05.641Z" },
-]
 
 [[package]]
 name = "kiari-plugins"
@@ -1458,8 +1454,8 @@ lint = [
 requires-dist = [
     { name = "firebase-admin", marker = "extra == 'firebase-admin'", specifier = ">=7.5.0,<8" },
     { name = "imageio", marker = "extra == 'imageio'", specifier = ">=2.37.4,<3" },
-    { name = "kiari", specifier = ">=0.2.0" },
-    { name = "kiarina", specifier = ">=2.27.0" },
+    { name = "kiari", git = "https://github.com/kiarina/kiari.git?branch=main" },
+    { name = "kiarina", git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina&branch=main" },
 ]
 provides-extras = ["firebase-admin", "imageio"]
 
@@ -1476,7 +1472,7 @@ lint = [
 [[package]]
 name = "kiarina"
 version = "2.27.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-audio" },
     { name = "kiarina-agi-base" },
@@ -1507,10 +1503,6 @@ dependencies = [
     { name = "kiarina-utils-common" },
     { name = "kiarina-utils-file" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/75/96/aa72942e1620e2ca5cad47e49ec7f2e4fbb466d0da1c9f6acb7d62a4a964/kiarina-2.27.0.tar.gz", hash = "sha256:90896f581ddbfd828b4bbca075c21834c6f19540b35cec7f675affb29a072e74", size = 3001, upload-time = "2026-08-21T14:44:02.561Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f2/4f/17541222b228264f14feec333a7951f071413e92eb8fd780f71022bebc79/kiarina-2.27.0-py3-none-any.whl", hash = "sha256:3dfa7a581b83a2f9ad1daf68bb5757b2a3d710d8fcc50360242d74cd20cc8f74", size = 2442, upload-time = "2026-08-21T14:43:57.505Z" },
-]
 
 [package.optional-dependencies]
 all = [
@@ -1525,7 +1517,7 @@ all = [
 [[package]]
 name = "kiarina-agi-audio"
 version = "2.15.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-audio&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "jaxtyping" },
     { name = "kiarina-agi-base" },
@@ -1537,10 +1529,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/97/02/ed8a9fface6360a1ecd68af7414275be2cad33cd6fa6c3ab8fecf6858db9/kiarina_agi_audio-2.15.0.tar.gz", hash = "sha256:1352bca6c689acfd1499a7216f7288bc54ace9fa5d6e4ef7c2328dd33c897cd8", size = 81056, upload-time = "2026-07-13T15:55:10.967Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/bf/b85b905da0e94dd4fcfb9d0d25a07e7b92aef1d8b77fec81d73ab1811178/kiarina_agi_audio-2.15.0-py3-none-any.whl", hash = "sha256:3aba9192fbb4e121d5670ebf43576ad6dc70597cedf7705652d2f1d32037eebd", size = 162679, upload-time = "2026-07-13T15:55:04.222Z" },
 ]
 
 [package.optional-dependencies]
@@ -1560,7 +1548,7 @@ all = [
 [[package]]
 name = "kiarina-agi-base"
 version = "2.7.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-base&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "jaxtyping" },
     { name = "kiarina-currency" },
@@ -1575,15 +1563,11 @@ dependencies = [
     { name = "pyyaml" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1d/45/cb89db0718be47455b58270689b87abc06085adc64d33029aeb10dc2b2e7/kiarina_agi_base-2.7.0.tar.gz", hash = "sha256:c0857bf65070f0236b27941c6fdfc959628d79107552e8f58bcb32582731c749", size = 25386, upload-time = "2026-07-06T04:04:37.043Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/d6/6047c6fa274d8e9abf9bd6dcc75b254b4ab200f38a4390c830f7d4ad90c3/kiarina_agi_base-2.7.0-py3-none-any.whl", hash = "sha256:cd5af313d2cc34dee33d1481918687ea0a08daa734cee5c79504883c35305b24", size = 38242, upload-time = "2026-07-06T04:04:31.459Z" },
-]
 
 [[package]]
 name = "kiarina-agi-data"
 version = "2.19.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-data&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "jaxtyping" },
     { name = "kiarina-agi-base" },
@@ -1594,15 +1578,11 @@ dependencies = [
     { name = "pydantic" },
     { name = "ulid-py" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/2f/4b9b2c870af653eb4a088b00db3d7eb8ff36f7fc6a96962df63566969e67/kiarina_agi_data-2.19.0.tar.gz", hash = "sha256:9f84adddb21e74540dfeabf643ad742195fc73071e0a29126b1a3a8786439445", size = 42353, upload-time = "2026-07-27T09:50:43.158Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c0/a0/1397d14cb9579ced247417a81f19608815ce09ea96daac48fe4a382ec593/kiarina_agi_data-2.19.0-py3-none-any.whl", hash = "sha256:86bf4f143d3af9fdd4c3129dd0b2a230ca22bf45ff9824f49ae6ba30abde662c", size = 55554, upload-time = "2026-07-27T09:50:38.642Z" },
-]
 
 [[package]]
 name = "kiarina-agi-data-builder"
 version = "2.21.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-data-builder&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-audio" },
     { name = "kiarina-agi-base" },
@@ -1619,10 +1599,6 @@ dependencies = [
     { name = "pydantic-settings-manager" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/06/b2/5481107f6eea618e6ee6d2d6f1b91c99e007a85571e01731effd593587b4/kiarina_agi_data_builder-2.21.1.tar.gz", hash = "sha256:30b2d2357a65a5113cc59e27530fa8a3e53a14cf290b9ced3a8dafd5b68bea84", size = 67663, upload-time = "2026-08-10T06:45:53.831Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ea/37/bb6f2f52d5422f45cf2d69bf189afd09c02a306649b752683316787406c1/kiarina_agi_data_builder-2.21.1-py3-none-any.whl", hash = "sha256:90b51fa7ad150d8c7cff8cab5cf3c6c23296e2c0d48a8ec3857cd9455664bdef", size = 100544, upload-time = "2026-08-10T06:45:50.378Z" },
-]
 
 [package.optional-dependencies]
 all = [
@@ -1636,7 +1612,7 @@ all = [
 [[package]]
 name = "kiarina-agi-file"
 version = "2.21.3"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-file&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-lib-google" },
@@ -1647,10 +1623,6 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/de/c9e9e63c6a26a1e0934e93012639d141366dd65a31dc8615e5d8cd4d8517/kiarina_agi_file-2.21.3.tar.gz", hash = "sha256:092124b03a1da6cbe61f373d4c34c4a8d004dbe46c581f5b0b3e50114cbb80d6", size = 21497, upload-time = "2026-08-11T22:10:41.473Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/48/ca306819631f975623f34354522dedd4bbf2a2f2ece8a170459110cd655b/kiarina_agi_file-2.21.3-py3-none-any.whl", hash = "sha256:88db2779c6947d0c76ba9bb08865908341dae78d5f005663f5d3c89b22f41cd5", size = 25585, upload-time = "2026-08-11T22:10:39.24Z" },
-]
 
 [package.optional-dependencies]
 all = [
@@ -1660,7 +1632,7 @@ all = [
 [[package]]
 name = "kiarina-agi-flow"
 version = "2.11.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-flow&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1671,15 +1643,11 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/04/67/31372f98bb25bfa2fd28a1bad3d7c8dd53a24e443753954b1ee7c36232ce/kiarina_agi_flow-2.11.0.tar.gz", hash = "sha256:5179fad1f9d34986bab87fe2be0ffe9ce623b96985137823ccb8c8b17f46975f", size = 20776, upload-time = "2026-07-09T14:09:51.419Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/be/0e/44ed16e945a12a9aa99f9d44a22491148e65cd191b07049d279f99cc9f78/kiarina_agi_flow-2.11.0-py3-none-any.whl", hash = "sha256:93f0bbd392a805f1c2a1fb1452c73231752399469b74dd78ef6464fd5de200c3", size = 32142, upload-time = "2026-07-09T14:09:49.493Z" },
-]
 
 [[package]]
 name = "kiarina-agi-image"
 version = "2.21.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-image&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1693,10 +1661,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/90/a9/443bcc0dc4b43a48977fdaf9696f81b2c0b9cacd42246b8eaae43adb3cf6/kiarina_agi_image-2.21.1.tar.gz", hash = "sha256:5a2f64f95ee1b0c08645775dbf1cc996fc3bfef02bc02f6da1f96afc66b9cb95", size = 62176, upload-time = "2026-08-10T06:45:54.875Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bb/b0/2c36dd9a8026bf24ff0eb44485998fc7df2bf4b3cfd4214cf714e9e1ccbc/kiarina_agi_image-2.21.1-py3-none-any.whl", hash = "sha256:1c39221f854d3c43b194dfce97bb766a514c27496accf3ea33df758ea843d732", size = 113208, upload-time = "2026-08-10T06:45:51.597Z" },
 ]
 
 [package.optional-dependencies]
@@ -1713,7 +1677,7 @@ all = [
 [[package]]
 name = "kiarina-agi-runner"
 version = "2.21.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-runner&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1728,15 +1692,11 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/45/75/87629a39110a2f880dbd944840225a0cb83a31a257a9dfe19b54b7914142/kiarina_agi_runner-2.21.0.tar.gz", hash = "sha256:e15eb9f1e49979e9071160a1a50d53ae1c16fcaabd5bfcf14627a8c62452fcda", size = 13392, upload-time = "2026-07-29T08:52:31.269Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ad/97/24e1228f850049e6d6d6cc9b7f85e22cbbc2607da0be0b179099ad5d2640/kiarina_agi_runner-2.21.0-py3-none-any.whl", hash = "sha256:ff81a2c9adb6235097cfd873fab95574223bc10c18946aa57f088a9d9070597d", size = 18043, upload-time = "2026-07-29T08:52:29.218Z" },
-]
 
 [[package]]
 name = "kiarina-agi-text"
 version = "2.22.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-text&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1749,10 +1709,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/4b/4d20d1baddab3a70014b8b7984251d39ffc7e95734713632cd5b96cb59ec/kiarina_agi_text-2.22.1.tar.gz", hash = "sha256:c87844d88f209a2e8a503840f9c12ad1e11f4986357380aa36ab893d5d4394c5", size = 61047, upload-time = "2026-08-16T09:43:55.457Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/af/f1/498a076423d583dd58f5dd0c0b93693c452ae2deb5f603e5924f1d5d5273/kiarina_agi_text-2.22.1-py3-none-any.whl", hash = "sha256:d7181d6f89419e9488621285efdba17701f60e6b6efdf44192a40bec90dffb1d", size = 84769, upload-time = "2026-08-16T09:43:53.043Z" },
 ]
 
 [package.optional-dependencies]
@@ -1774,7 +1730,7 @@ all = [
 [[package]]
 name = "kiarina-agi-tool"
 version = "2.22.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-tool&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1785,15 +1741,11 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/51/a5/74b0be87dda9340765cf89574959595708e7bfd07dbc298d51a30171aa5b/kiarina_agi_tool-2.22.0.tar.gz", hash = "sha256:7093b4e922e1c9a77373f1e8b95c063a3c5c301d554dd34003cec20b445f794a", size = 23893, upload-time = "2026-08-14T11:45:04.825Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/f5/21e77cea68f967f9c691438aa84624a76ef0d89b08164a3465b3c9d76b64/kiarina_agi_tool-2.22.0-py3-none-any.whl", hash = "sha256:ada4211dd807afdb78166463d9afcc5877702d08552e29709fdfb802156d6166", size = 40893, upload-time = "2026-08-14T11:45:01.962Z" },
-]
 
 [[package]]
 name = "kiarina-agi-video"
 version = "2.15.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-video&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-image" },
@@ -1804,10 +1756,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/92/76/03a0af5809d231f42e496b0b308e24296281aaf1c9a1921e50ce738d052e/kiarina_agi_video-2.15.0.tar.gz", hash = "sha256:4ee1f33bbdb7a01931d0db8e4371347c249d80ab89d66c5b4fbabd70a3cbceff", size = 28387, upload-time = "2026-07-13T15:55:14.302Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/02/2a/2fccb88e764c9ff92d52d8185a00b4045b8d1fe9bb24061eb5a869f0de3f/kiarina_agi_video-2.15.0-py3-none-any.whl", hash = "sha256:eaf0b4fa3d52242f2e058a583e2d2b87fd3aa6f011b543079f9d1fea5edbef35", size = 47947, upload-time = "2026-07-13T15:55:08.787Z" },
 ]
 
 [package.optional-dependencies]
@@ -1822,17 +1770,13 @@ all = [
 [[package]]
 name = "kiarina-currency"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-currency&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-utils-common" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/bb/72/06a22448c8351f47dc798add0225905562682b1d768685cadb340000781f/kiarina_currency-2.3.1.tar.gz", hash = "sha256:39f462407be82ed266c94ee1c3251fbe93160656b0b27b74b07fc095dbbff41b", size = 12316, upload-time = "2026-07-02T05:17:10.47Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7d/8c/59197c3184d46b7dffaf44ca769db1b59b2f9ba30ae6ca4664d82ba65689/kiarina_currency-2.3.1-py3-none-any.whl", hash = "sha256:cd568a67615125469e467c59bd1ed6f662b387cfe0b27391c3e73b571da55e49", size = 16308, upload-time = "2026-07-02T05:16:52.853Z" },
 ]
 
 [[package]]
@@ -1851,78 +1795,58 @@ wheels = [
 [[package]]
 name = "kiarina-i18n"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-i18n&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b5/e9/e3b22ca501c146174b90567cdcc85a784d1d6d705c4def1ae753083169ad/kiarina_i18n-2.3.1.tar.gz", hash = "sha256:bdf241ee9f5e299cd2aa5eb6106f37e0591a14f38c8a09dd9255e7c7c07d2bdd", size = 24490, upload-time = "2026-07-02T05:17:11.223Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/bb/5cebe82c09852e9cd12aadecbec07b61c08da050b9b96db085adcb6c3baa/kiarina_i18n-2.3.1-py3-none-any.whl", hash = "sha256:86a944d84197086518c1a70eaf041944425045ff4a8e6f434c1a233fb7ba3d3b", size = 13910, upload-time = "2026-07-02T05:16:54.225Z" },
-]
 
 [[package]]
 name = "kiarina-lib-anthropic"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-anthropic&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/99/8e/3278ed0656282667e2208802c3b08cee078ffa00ff0174cf498047bafc76/kiarina_lib_anthropic-2.3.1.tar.gz", hash = "sha256:8e0fe1de2d4834e1b40cd862c1949fa6ee747016fc13918e5c43a74b1fa6588a", size = 5476, upload-time = "2026-07-02T05:17:12.131Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/0e/62b4a90b16609a7749badb51cab676c86aa3fa47de8c056e39d8eeb8fc92/kiarina_lib_anthropic-2.3.1-py3-none-any.whl", hash = "sha256:36d31e88441bbfecfebf5e167d941ddca267c51170fcd03937f2bca268c585fc", size = 4001, upload-time = "2026-07-02T05:16:55.331Z" },
 ]
 
 [[package]]
 name = "kiarina-lib-cloudflare"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-cloudflare&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/e5/a58b9d62d28ced963a685799e1069a337eb09c040034d25c7ed05888c695/kiarina_lib_cloudflare-2.3.1.tar.gz", hash = "sha256:99d162c8eb22d98ab1d6c7a98b094bd638445563f08426d8d18b59a8e179ec2c", size = 5619, upload-time = "2026-07-02T05:17:12.882Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/f7/d5367e6f23fcbfa8e65b5031e867f6cdf17967a83645334269848a0bf6ba/kiarina_lib_cloudflare-2.3.1-py3-none-any.whl", hash = "sha256:7a217d3087f5189ef1a14030bfa071a51ef4d3f8f31548ee1d97417556b12a8d", size = 3864, upload-time = "2026-07-02T05:16:56.609Z" },
 ]
 
 [[package]]
 name = "kiarina-lib-cloudflare-d1"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-cloudflare-d1&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-lib-cloudflare" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/04/42/f3afbaf19511188567306d6da9bd0bbe42d98a87b639f2000c2c918d5d78/kiarina_lib_cloudflare_d1-2.3.1.tar.gz", hash = "sha256:4c2a2812057589551f93fc9db261ccfac29932f8d8857d53770cd866e8347112", size = 10116, upload-time = "2026-07-02T05:17:13.665Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4a/f8/248acd47d53f82cee4b0e453c077cdfb590a1986c4b444a9ad9e06727f19/kiarina_lib_cloudflare_d1-2.3.1-py3-none-any.whl", hash = "sha256:a2395a5ae45ee42cc5dc1df51c0cc1f89776a385df5f1ce3e0c399a436b128b2", size = 11382, upload-time = "2026-07-02T05:16:57.819Z" },
-]
 
 [[package]]
 name = "kiarina-lib-falkordb"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-falkordb&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "kiarina-falkordb" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
     { name = "redis" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/df/4e/4a1978953c874a409f169d67f03b50dad12e86a5762cff51935c381f9514/kiarina_lib_falkordb-2.3.1.tar.gz", hash = "sha256:45b146f2dce3f54fccf8f705e56a696162e1f6dc255529fa6187a7ff8547b288", size = 8349, upload-time = "2026-07-02T05:17:14.431Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/08/b41e12b0dc7dfb6b3fba1ceafb461279670b42f4529e4c66c9af31af80e5/kiarina_lib_falkordb-2.3.1-py3-none-any.whl", hash = "sha256:14b8687eab797287ecb819295d0a5d243e051e7571d5abf8ee6336d5d78452d4", size = 8406, upload-time = "2026-07-02T05:16:59.051Z" },
-]
 
 [[package]]
 name = "kiarina-lib-firebase"
 version = "2.27.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-utils-common" },
@@ -1931,31 +1855,23 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4f/f6/324dec77f137f3bbc35e8abd1cdec9f18f1f357d86134909ce530353f0a0/kiarina_lib_firebase-2.27.0.tar.gz", hash = "sha256:8ab40d31556b6f70fa38838c3e81ac19ea33fe85a41a9e43ca9250dba1c5bd53", size = 18287, upload-time = "2026-08-21T14:44:03.45Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f8/a7/13236915d86b536533c537281d671739e2885c5763ee0da6b8ecdedb36ab/kiarina_lib_firebase-2.27.0-py3-none-any.whl", hash = "sha256:a83ff9f59549370b9e5c99d2e2ce7f66f7053ef02833afbea07908b617eac476", size = 14335, upload-time = "2026-08-21T14:43:58.875Z" },
-]
 
 [[package]]
 name = "kiarina-lib-firebase-firestore"
 version = "2.27.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase-firestore&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-lib-firebase" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/cd/41/d555bdaef5fe2ba53904e216c1688a236eb94428129522da5b9b7106f230/kiarina_lib_firebase_firestore-2.27.0.tar.gz", hash = "sha256:ba23fe78a5107f98dc968d44cd514492a5cbad9cb22f6f32636db1ace52cca5d", size = 13850, upload-time = "2026-08-21T14:44:04.331Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/8b/f07588072353153f0ce87431f8dbc0500e080701dfd524b5f6beb263562b/kiarina_lib_firebase_firestore-2.27.0-py3-none-any.whl", hash = "sha256:ff9ee5062796f92bd3111180874375669a883b4046fd4acb950edfe35ab363e5", size = 10403, upload-time = "2026-08-21T14:44:00.178Z" },
 ]
 
 [[package]]
 name = "kiarina-lib-firebase-rtdb"
 version = "2.27.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase-rtdb&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-lib-firebase" },
@@ -1963,56 +1879,40 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/c4/1209e0bd788599b6072c990bdf0fe64624a8c1d8d2f70f1527f8c02b9f4e/kiarina_lib_firebase_rtdb-2.27.0.tar.gz", hash = "sha256:e4947d66106e714fd8fac6b5c7a97e36ca2101e59a93d851fd8aa84c7081538b", size = 20637, upload-time = "2026-08-21T14:44:05.252Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/e7/7799cfe942989b3a12eae378528c38a4c5b8e08a9aff84b24a1f950a8ebe/kiarina_lib_firebase_rtdb-2.27.0-py3-none-any.whl", hash = "sha256:5c191acd9970fbea353efa0c6f188adb0c618dbea6b25824df3eae0677763478", size = 13047, upload-time = "2026-08-21T14:44:01.338Z" },
-]
 
 [[package]]
 name = "kiarina-lib-google"
 version = "2.8.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-google&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "google-api-python-client" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/b1/c701233af571760fb8ef3b778d8e163d0e49de46b3bafb59ee957e1cc98d/kiarina_lib_google-2.8.0.tar.gz", hash = "sha256:bc97e65fa5a1b3fb11ad717542ebe8c196f8b087a3671f1b7b9a7190587052b8", size = 19645, upload-time = "2026-07-08T03:56:04.098Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/d5/84c92642c21bb7ad8cf2d5548e1535c9610cc3a09268d8d769f3342064cc/kiarina_lib_google-2.8.0-py3-none-any.whl", hash = "sha256:fa0139623ed697f80cb386c4e1bd4a8603e8d2a3198a364343079853ce2a0200", size = 14066, upload-time = "2026-07-08T03:55:57.633Z" },
-]
 
 [[package]]
 name = "kiarina-lib-openai"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-openai&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/28/9d/3e848543b17f1bbe3606cfbd84616ad57776085507418e714ec5833da878/kiarina_lib_openai-2.3.1.tar.gz", hash = "sha256:bcacae8867114c3aecde3e789934ec26812a79f259690064dfc099cbcf208ab2", size = 5905, upload-time = "2026-07-02T05:17:18Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6b/30/118e076fb9bcb39aa997c62c5afede642b7468ed17777ded63428d2b0a74/kiarina_lib_openai-2.3.1-py3-none-any.whl", hash = "sha256:2cbf97262b865defc483ea1eb0891f8c71fe84fe4587a9c6023d57a8146f0fb0", size = 4266, upload-time = "2026-07-02T05:17:03.651Z" },
 ]
 
 [[package]]
 name = "kiarina-lib-redis"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-redis&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
     { name = "redis" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/35/11/600528be62c3483b18225cfdac01e7b84856794fc070a2bddfc6dfa52b39/kiarina_lib_redis-2.3.1.tar.gz", hash = "sha256:5e4d8e5e3e3e93c08ba5f0d4c9df4265da64bce0429f0688701bcb9670031b19", size = 8654, upload-time = "2026-07-02T05:17:18.785Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ad/40/77ee80f1ab849cae650e0c40765c58102a50b290e08b536b2b90b26d0375/kiarina_lib_redis-2.3.1-py3-none-any.whl", hash = "sha256:e5debb09c5af95d413a2edb918d243749a5080f970bf7ad4cff510c705673a80", size = 8461, upload-time = "2026-07-02T05:17:04.846Z" },
-]
 
 [[package]]
 name = "kiarina-lib-redisearch"
 version = "2.17.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-redisearch&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "numpy" },
     { name = "pydantic" },
@@ -2020,28 +1920,20 @@ dependencies = [
     { name = "pydantic-settings-manager" },
     { name = "redis" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/41/2d/e63e461323261b0d35bfb1c1038deac8a89a0dc27a62148d68bc3a013ebc/kiarina_lib_redisearch-2.17.0.tar.gz", hash = "sha256:3e6db276fe8dbfd0b2eef994004b3db1f557e8496fbd3afc5527f5d8d72565a9", size = 29795, upload-time = "2026-07-25T17:11:57.513Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/d1/669848fda56e2b29c97c653a801d45e4f4cb8be85879c07e2472c320648c/kiarina_lib_redisearch-2.17.0-py3-none-any.whl", hash = "sha256:6f5cb8f713d17619c28020338133389258fb219ad793052c692a63a19a323862", size = 40587, upload-time = "2026-07-25T17:11:50.625Z" },
-]
 
 [[package]]
 name = "kiarina-lib-slack"
 version = "2.3.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-slack&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/7b/aebf8b0092f3339d8bac298ae670a6a9c59560ee6c5368e69ccf394ceb92/kiarina_lib_slack-2.3.1.tar.gz", hash = "sha256:44fae230bb19c73419d262d0d1626292e7ff9a5e731155fb89b7df1e29d05b0c", size = 5565, upload-time = "2026-07-02T05:17:20.689Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/82/0b73002f42c55298d0365fa44406853be536bd943017a67cae88f119f234/kiarina_lib_slack-2.3.1-py3-none-any.whl", hash = "sha256:7f7dd0a70076faedbcc1497fcbd4ec47674d11335814b68653fcd7b8fd3580bd", size = 4288, upload-time = "2026-07-02T05:17:07.177Z" },
 ]
 
 [[package]]
 name = "kiarina-utils-app"
 version = "2.4.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-app&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "filelock" },
     { name = "platformdirs" },
@@ -2049,27 +1941,19 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f2/34/bf751c50693b2046b4279082da1d96217119c53fa9d512ba4d72478a6537/kiarina_utils_app-2.4.0.tar.gz", hash = "sha256:4a2cd291e17534b746429f7ec0904e46ea4a5e9083997a99f7876abd38015e3e", size = 10047, upload-time = "2026-07-03T05:39:28.761Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/bf/f913ee9ff4110c6d2af30084a8b0730e47d8270156f4333c673d0dd36bee/kiarina_utils_app-2.4.0-py3-none-any.whl", hash = "sha256:8ebd1b413b0e1a08d2f3b291692762f1ea99649c99d91d3a0495bbf10ac40c48", size = 8588, upload-time = "2026-07-03T05:39:25.963Z" },
-]
 
 [[package]]
 name = "kiarina-utils-common"
 version = "2.18.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-common&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "pydantic" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/8c/0d/62471297dddfc1fa7b261a26999a03dccf64629b518a4b0c365572586729/kiarina_utils_common-2.18.0.tar.gz", hash = "sha256:789e10d84927446898987c561612443f7a2fec7b78bb200bdd020162172a7dd9", size = 27428, upload-time = "2026-07-26T03:44:36.436Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e4/a9/f81c6c66c8c31b75b83bff1c82127189c79c55ba70bd03266dae6a1172c0/kiarina_utils_common-2.18.0-py3-none-any.whl", hash = "sha256:f6cfcc5b548519644f972b7ca69e645b5bdf43fbe9c366018a0f78c124217ad4", size = 23398, upload-time = "2026-07-26T03:44:34.246Z" },
 ]
 
 [[package]]
 name = "kiarina-utils-file"
 version = "2.17.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-file&branch=main#4d50e49865bba1c3500ce923024c30cf5db2c08c" }
 dependencies = [
     { name = "aiofiles" },
     { name = "charset-normalizer" },
@@ -2078,10 +1962,6 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
     { name = "pyyaml" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/29/a0/40c4fc6cf61c180be6c3f5a5ae730c08b0c6deb3ef75c5ec31d5e3e70ad0/kiarina_utils_file-2.17.0.tar.gz", hash = "sha256:d93e6f7152bf2c6908ea52f6325d19184ce849eb6df9b09de901ebfbc67fa819", size = 28866, upload-time = "2026-07-25T17:11:58.659Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/04/ad1126dc19edca8a84982af507092cef7cb6e5d262a9809c9eb7b9346c0f/kiarina_utils_file-2.17.0-py3-none-any.whl", hash = "sha256:e2ca4fbba65129794e47516445cb0c904f04105fa7cdbf6db19df3e37452aef2", size = 53678, upload-time = "2026-07-25T17:11:52.144Z" },
 ]
 
 [[package]]

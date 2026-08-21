@@ -142,6 +142,12 @@ make upgrade  # bump the lockfile, then run make lint to catch API drift
 
 ruff and mypy are configured to match kiari; mypy runs in `strict` mode.
 
+The dev environment takes **kiari and kiarina from the HEAD of their default branch**, not
+from PyPI (see `[tool.uv.sources]`), so breaking changes surface here before they reach a
+release. `uv.lock` pins the commit, so this stays reproducible; `make upgrade` moves it
+forward. The `>=` specifiers under `[project]` remain the declared contract — pip and
+anything consuming this repository ignore `[tool.uv.sources]` entirely.
+
 ## License
 
 MIT
