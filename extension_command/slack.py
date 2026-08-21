@@ -1,21 +1,16 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   post-message:
-#     kiari ext -v slack post-message --channel C01234567 "hello"
-#     kiari ext -v slack post-message --channel C01234567 --thread-ts 1700000000.000100 "reply"
-#   get-channel-messages:
-#     kiari ext -v slack get-channel-messages --channel C01234567 --limit 20
-#   watch-channel:
-#     kiari ext -v slack watch-channel
-#     kiari ext -v slack watch-channel --channel C01234567,C07654321
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/slack.py" slack post-message --channel C01234567 "hello"
+#
+#   The examples below omit the `kiari ext -v --plugin ... slack` prefix:
+#     post-message --channel C01234567 --thread-ts 1700000000.000100 "reply"
+#     get-channel-messages --channel C01234567 --limit 20
+#     watch-channel
+#     watch-channel --channel C01234567,C07654321
 import argparse
 import asyncio
 import logging
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import kiarina.lib.slack
@@ -65,7 +60,7 @@ class SlackCommand(BaseExtensionCommand):
             thread_ts=options.thread_ts if options.thread_ts else None,
         )
 
-        print(f"Posted message:")
+        print("Posted message:")
         print(f"  channel: {response['channel']}")
         print(f"  ts: {response['ts']}")
         print(f"  text: {options.message}")
@@ -136,14 +131,14 @@ class SlackCommand(BaseExtensionCommand):
             print("Watching all channels the bot is in.")
         print("Listening. Press Ctrl+C to stop.")
 
-        handler_task = asyncio.create_task(handler.start_async())
+        handler_task = asyncio.create_task(handler.start_async())  # type: ignore[no-untyped-call]
 
         try:
             await handler_task
         except (KeyboardInterrupt, asyncio.CancelledError):
             print("Stopping.")
         finally:
-            await handler.close_async()
+            await handler.close_async()  # type: ignore[no-untyped-call]
             if not handler_task.done():
                 handler_task.cancel()
                 try:
@@ -155,12 +150,8 @@ class SlackCommand(BaseExtensionCommand):
 
     # ----- tokens -----
 
-    def _slack_settings(
-        self, options: argparse.Namespace
-    ) -> kiarina.lib.slack.SlackSettings:
-        return kiarina.lib.slack.settings_manager.get_settings(
-            options.slack_settings_key
-        )
+    def _slack_settings(self, options: argparse.Namespace) -> kiarina.lib.slack.SlackSettings:
+        return kiarina.lib.slack.settings_manager.get_settings(options.slack_settings_key)
 
     def _bot_token(self, options: argparse.Namespace) -> str:
         settings = self._slack_settings(options)
@@ -186,7 +177,7 @@ def _print_message(message: dict[str, Any]) -> None:
 
     if ts:
         try:
-            dt = datetime.fromtimestamp(float(ts), tz=timezone.utc)
+            dt = datetime.fromtimestamp(float(ts), tz=UTC)
             print(f"time: {dt.isoformat()}")
         except (ValueError, TypeError):
             pass

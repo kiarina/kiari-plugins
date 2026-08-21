@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#MISE description="Lint and type check (ruff check + format check + mypy)"
+
+set -euo pipefail
+
+echo "⚙️ Running linting..."
+
+status=0
+
+# Run ruff check
+echo "🔧 Running ruff check..."
+uv run --group lint ruff check . || status=1
+
+# Run ruff format check
+echo "🔧 Running ruff format check..."
+uv run --group lint ruff format --check . || status=1
+
+# Run mypy
+echo "🔍 Running mypy..."
+uv run --group lint mypy . || status=1
+
+if [ $status -ne 0 ]; then
+    echo "❌ Linting failed"
+    exit $status
+fi
+
+echo "✅ Linting passed!"

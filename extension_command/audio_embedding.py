@@ -1,20 +1,15 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   add:
-#     kiari ext audio-embedding add --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker ./sample.wav
-#   list:
-#     kiari ext audio-embedding list --store-dir ./.tmp/audio_embeddings/speaker
-#   search:
-#     kiari ext audio-embedding search --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker --top-n 10 ./query.wav
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/audio_embedding.py" audio-embedding add --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker ./sample.wav
+#
+#   The examples below omit the `kiari ext -v --plugin ... audio-embedding` prefix:
+#     list --store-dir ./.tmp/audio_embeddings/speaker
+#     search --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker --top-n 10 ./query.wav
 import argparse
 import json
 from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import TypeAlias
+from typing import Any
 
 from kiarina.agi.audio_embedding_model import embed_audio
 from kiarina.agi.cost_recorder import cost_recorder_registry
@@ -28,7 +23,7 @@ from kiari.cli.ext.extension_command import (
 )
 from kiari.lib.audio_utils import load_audio_samples
 
-SearchResult: TypeAlias = tuple[Embedding, float]
+type SearchResult = tuple[Embedding, float]
 
 
 # --------------------------------------------------
@@ -36,7 +31,7 @@ SearchResult: TypeAlias = tuple[Embedding, float]
 # --------------------------------------------------
 
 
-def _entry_summary(entry: Embedding) -> dict:
+def _entry_summary(entry: Embedding) -> dict[str, Any]:
     return {
         "id": entry.id,
         "label": entry.metadata.get("label") or entry.id,
@@ -151,9 +146,7 @@ class AudioEmbeddingCommand(BaseExtensionCommand):
     ) -> None:
         input_file_path = Path(options.input_file).expanduser()
         samples, sample_rate = load_audio_samples(input_file_path)
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = RunContext(agent_id="audio-embedding-command")
 
         embedding = await embed_audio(
@@ -226,9 +219,7 @@ class AudioEmbeddingCommand(BaseExtensionCommand):
     ) -> None:
         input_file_path = Path(options.input_file).expanduser()
         samples, sample_rate = load_audio_samples(input_file_path)
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = RunContext(agent_id="audio-embedding-search-command")
 
         query = await embed_audio(

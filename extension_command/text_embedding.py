@@ -1,23 +1,17 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   add:
-#     kiari ext text-embedding add --store-dir ./.tmp/text_embeddings --text-embedding-model local "Apple SiliconでローカルLLMを動かす"
-#     kiari ext text-embedding add --store-dir ./.tmp/text_embeddings --input-file ./note.txt --label note-1
-#   list:
-#     kiari ext text-embedding list --store-dir ./.tmp/text_embeddings
-#   search:
-#     kiari ext text-embedding search --store-dir ./.tmp/text_embeddings --text-embedding-model local --top-n 10 "日本語検索に強い埋め込み"
-#   validate (built-in labeled text set and measure kNN retrieval accuracy):
-#     kiari ext -v text-embedding validate --text-embedding-model local --samples-per-class 4
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/text_embedding.py" text-embedding add --store-dir ./.tmp/text_embeddings --text-embedding-model local "Apple SiliconでローカルLLMを動かす"
+#
+#   The examples below omit the `kiari ext -v --plugin ... text-embedding` prefix:
+#     add --store-dir ./.tmp/text_embeddings --input-file ./note.txt --label note-1
+#     list --store-dir ./.tmp/text_embeddings
+#     search --store-dir ./.tmp/text_embeddings --text-embedding-model local --top-n 10 "日本語検索に強い埋め込み"
+#     validate --text-embedding-model local --samples-per-class 4    # built-in labeled text set, measure kNN retrieval accuracy
 import argparse
 import json
 from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Any, TypeAlias
+from typing import Any
 
 import numpy as np
 from kiarina.agi.cost_recorder import cost_recorder_registry
@@ -31,8 +25,8 @@ from kiari.cli.ext.extension_command import (
     extension_command_registry,
 )
 
-SearchResult: TypeAlias = tuple[Embedding, float]
-ValidationBundle: TypeAlias = tuple[list[str], list[int], dict[int, str]]
+type SearchResult = tuple[Embedding, float]
+type ValidationBundle = tuple[list[str], list[int], dict[int, str]]
 
 _VALIDATION_DATASET: dict[str, list[str]] = {
     "animals": [
@@ -78,9 +72,7 @@ _VALIDATION_DATASET: dict[str, list[str]] = {
 def _load_text(options: argparse.Namespace) -> tuple[str, str | None]:
     if options.input_file:
         input_file_path = Path(options.input_file).expanduser()
-        return input_file_path.read_text(encoding=options.encoding), str(
-            input_file_path
-        )
+        return input_file_path.read_text(encoding=options.encoding), str(input_file_path)
 
     if options.text is not None:
         return options.text, None
@@ -96,7 +88,7 @@ def _text_preview(text: str, *, max_length: int = 120) -> str:
     return normalized[: max_length - 3] + "..."
 
 
-def _entry_summary(entry: Embedding) -> dict:
+def _entry_summary(entry: Embedding) -> dict[str, Any]:
     return {
         "id": entry.id,
         "label": entry.metadata.get("label") or entry.id,
@@ -125,9 +117,7 @@ def _create_run_context(
         "time_zone": context.run_options.time_zone or "UTC",
         "currency": context.run_options.currency or "USD",
     }
-    run_context_kwargs: dict[str, Any] = {
-        key: value for key, value in values.items() if value
-    }
+    run_context_kwargs: dict[str, Any] = {key: value for key, value in values.items() if value}
     return RunContext(**run_context_kwargs)
 
 
@@ -245,15 +235,11 @@ class TextEmbeddingCommand(BaseExtensionCommand):
         )
 
         if options.command == "add":
-            await self._add(
-                context, TextEmbeddingStore(Path(options.store_dir)), options
-            )
+            await self._add(context, TextEmbeddingStore(Path(options.store_dir)), options)
         elif options.command == "list":
             self._list(TextEmbeddingStore(Path(options.store_dir)), options)
         elif options.command == "search":
-            await self._search(
-                context, TextEmbeddingStore(Path(options.store_dir)), options
-            )
+            await self._search(context, TextEmbeddingStore(Path(options.store_dir)), options)
         elif options.command == "validate":
             await self._validate(context, options)
         else:  # pragma: no cover
@@ -266,9 +252,7 @@ class TextEmbeddingCommand(BaseExtensionCommand):
         options: argparse.Namespace,
     ) -> None:
         text, source_file = _load_text(options)
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = _create_run_context(
             context,
             agent_id="text-embedding-command",
@@ -284,9 +268,7 @@ class TextEmbeddingCommand(BaseExtensionCommand):
         )
 
         label_base = Path(source_file).stem if source_file else "text"
-        label = options.label or (
-            f"{label_base}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-        )
+        label = options.label or (f"{label_base}-{datetime.now().strftime('%Y%m%d-%H%M%S')}")
         embedding.metadata = {
             **embedding.metadata,
             "label": label,
@@ -343,9 +325,7 @@ class TextEmbeddingCommand(BaseExtensionCommand):
         options: argparse.Namespace,
     ) -> None:
         text, source_file = _load_text(options)
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = _create_run_context(
             context,
             agent_id="text-embedding-search-command",
@@ -415,9 +395,7 @@ class TextEmbeddingCommand(BaseExtensionCommand):
         if len(texts) < 2:
             raise ValueError("Need at least 2 samples to evaluate.")
 
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = _create_run_context(
             context,
             agent_id="text-embedding-validate-command",
@@ -456,21 +434,15 @@ class TextEmbeddingCommand(BaseExtensionCommand):
         print(f"Dataset: {options.dataset}")
         print(f"Samples: {report['num_samples']} (k={report['k']})")
         print(f"Top-1 kNN accuracy: {report['top1_accuracy'] * 100:.2f}%")
-        print(
-            "Mean same-class similarity:      "
-            f"{report['mean_same_class_similarity']:.4f}"
-        )
-        print(
-            "Mean different-class similarity: "
-            f"{report['mean_different_class_similarity']:.4f}"
-        )
+        print(f"Mean same-class similarity:      {report['mean_same_class_similarity']:.4f}")
+        print(f"Mean different-class similarity: {report['mean_different_class_similarity']:.4f}")
         print(f"Per-class accuracy ({len(report['per_class_accuracy'])} classes):")
         for class_id, accuracy in sorted(report["per_class_accuracy"].items()):
             name = names.get(int(class_id), str(class_id))
             print(f"  {name:<24} {accuracy * 100:6.2f}%")
 
 
-def _evaluate_knn(vectors: np.ndarray, labels: np.ndarray, *, k: int) -> dict:
+def _evaluate_knn(vectors: np.ndarray, labels: np.ndarray, *, k: int) -> dict[str, Any]:
     norms = np.linalg.norm(vectors, axis=1, keepdims=True)
     norms[norms == 0.0] = 1.0
     normalized = vectors / norms
@@ -500,7 +472,7 @@ def _evaluate_knn(vectors: np.ndarray, labels: np.ndarray, *, k: int) -> dict:
     diff = similarity[(~same_mask) & finite]
 
     return {
-        "num_samples": int(len(labels)),
+        "num_samples": len(labels),
         "k": k,
         "top1_accuracy": correct / len(labels),
         "mean_same_class_similarity": float(same.mean()) if same.size else 0.0,

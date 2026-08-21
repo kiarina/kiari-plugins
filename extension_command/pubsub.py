@@ -1,28 +1,20 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   create-topic:
-#     kiari ext -v pubsub create-topic --project-id my-project --topic-id my-topic
-#   delete-topic:
-#     kiari ext -v pubsub delete-topic --project-id my-project --topic-id my-topic
-#   create-subscription:
-#     kiari ext -v pubsub create-subscription --project-id my-project --topic-id my-topic --subscription-id my-sub
-#   delete-subscription:
-#     kiari ext -v pubsub delete-subscription --project-id my-project --subscription-id my-sub
-#   publish-message:
-#     kiari ext -v pubsub publish-message --project-id my-project --topic-id my-topic --attribute key=value "hello"
-#   pull-message:
-#     kiari ext -v pubsub pull-message --project-id my-project --subscription-id my-sub
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/pubsub.py" pubsub create-topic --project-id my-project --topic-id my-topic
+#
+#   The examples below omit the `kiari ext -v --plugin ... pubsub` prefix:
+#     delete-topic --project-id my-project --topic-id my-topic
+#     create-subscription --project-id my-project --topic-id my-topic --subscription-id my-sub
+#     delete-subscription --project-id my-project --subscription-id my-sub
+#     publish-message --project-id my-project --topic-id my-topic --attribute key=value "hello"
+#     pull-message --project-id my-project --subscription-id my-sub
 import argparse
 import asyncio
 import json
 import logging
 from collections.abc import Sequence
 
-from google.api_core.exceptions import AlreadyExists, NotFound  # type: ignore
-from google.cloud.pubsub import PublisherClient, SubscriberClient  # type: ignore
+from google.api_core.exceptions import AlreadyExists, NotFound
+from google.cloud.pubsub import PublisherClient, SubscriberClient  # type: ignore[import-untyped]
 from kiarina.lib.google import get_credentials
 
 from kiari.cli.ext.extension_command import (
@@ -47,9 +39,7 @@ def _parse_attributes(values: Sequence[str] | None) -> dict[str, str]:
 
     for entry in values:
         if "=" not in entry:
-            raise ValueError(
-                f"Invalid --attribute entry: {entry!r} (expected key=value)"
-            )
+            raise ValueError(f"Invalid --attribute entry: {entry!r} (expected key=value)")
 
         key, _, value = entry.partition("=")
         attributes[key] = value
@@ -92,9 +82,7 @@ class PubsubCommand(BaseExtensionCommand):
         topic_path = publisher.topic_path(options.project_id, options.topic_id)
 
         try:
-            topic = await asyncio.to_thread(
-                publisher.create_topic, request={"name": topic_path}
-            )
+            topic = await asyncio.to_thread(publisher.create_topic, request={"name": topic_path})
             print(f"Created topic: {topic.name}")
         except AlreadyExists:
             print(f"Topic already exists: {topic_path}")
@@ -104,9 +92,7 @@ class PubsubCommand(BaseExtensionCommand):
         topic_path = publisher.topic_path(options.project_id, options.topic_id)
 
         try:
-            await asyncio.to_thread(
-                publisher.delete_topic, request={"topic": topic_path}
-            )
+            await asyncio.to_thread(publisher.delete_topic, request={"topic": topic_path})
             print(f"Deleted topic: {topic_path}")
         except NotFound:
             print(f"Topic not found: {topic_path}")

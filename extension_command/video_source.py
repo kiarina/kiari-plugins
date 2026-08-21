@@ -1,17 +1,13 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   camera:
-#     kiari ext -v video-source --output-dir ./.tmp/video_source_camera --output-video
-#   file:
-#     kiari ext -v video-source --input-file ./assets/video/3.mp4 --output-dir ./.tmp/video_source_file --output-video
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/video_source.py" video-source --output-dir ./.tmp/video_source_camera --output-video    # camera
+#
+#   The examples below omit the `kiari ext -v --plugin ... video-source` prefix:
+#     --input-file ./assets/video/3.mp4 --output-dir ./.tmp/video_source_file --output-video    # file
 import argparse
 import json
 from collections.abc import Sequence
 from pathlib import Path
-from typing import TypeAlias, cast
+from typing import Any, TypeAlias
 
 import imageio.v3 as iio
 import numpy as np
@@ -30,7 +26,7 @@ from kiari.cli.ext.extension_command import (
     extension_command_registry,
 )
 
-ImagePixelBatch: TypeAlias = UInt8[np.ndarray, "frames height width rgb"]
+ImagePixelBatch: TypeAlias = UInt8[np.ndarray, "frames height width rgb"]  # noqa: UP040, F722
 
 # --------------------------------------------------
 # Utilities
@@ -80,7 +76,7 @@ def _to_uint8_rgb(pixels: ImagePixels) -> ImagePixels:
     elif pixels.shape[2] != 3:
         raise ValueError(f"Unsupported frame pixels shape: {pixels.shape}")
 
-    return cast(ImagePixels, pixels)
+    return pixels
 
 
 def _create_synthetic_video(*, frames: int, width: int, height: int) -> ImagePixelBatch:
@@ -89,9 +85,7 @@ def _create_synthetic_video(*, frames: int, width: int, height: int) -> ImagePix
     for frame_index in range(frames):
         pixels[frame_index, :, :, 0] = (frame_index * 31) % 256
         pixels[frame_index, :, :, 1] = np.linspace(0, 255, width, dtype=np.uint8)
-        pixels[frame_index, :, :, 2] = np.linspace(0, 255, height, dtype=np.uint8)[
-            :, np.newaxis
-        ]
+        pixels[frame_index, :, :, 2] = np.linspace(0, 255, height, dtype=np.uint8)[:, np.newaxis]
 
     return pixels
 
@@ -115,7 +109,7 @@ def _estimate_fps(frames: list[VideoFrame]) -> float | None:
     return (len(frames) - 1) / duration
 
 
-def _summary(frames: list[VideoFrame]) -> dict:
+def _summary(frames: list[VideoFrame]) -> dict[str, Any]:
     if not frames:
         return {
             "frames": 0,
@@ -176,7 +170,7 @@ class FrameFileWriter:
         iio.imwrite(video_file_path, pixels, fps=fps)
         return video_file_path
 
-    def save_metadata(self, frames: list[VideoFrame], summary: dict) -> Path:
+    def save_metadata(self, frames: list[VideoFrame], summary: dict[str, Any]) -> Path:
         metadata_file_path = self.output_dir / "metadata.json"
         metadata_file_path.write_text(
             json.dumps(
@@ -227,9 +221,7 @@ class VideoSourceCommand(BaseExtensionCommand):
         async with video_source.open(target):
             async for frame in video_source.read():
                 frames.append(frame)
-                _print_frame(
-                    frame, previous_frame=frames[-2] if len(frames) > 1 else None
-                )
+                _print_frame(frame, previous_frame=frames[-2] if len(frames) > 1 else None)
 
                 if self.frame_writer is not None:
                     self.frame_writer.save_frame(frame)
@@ -269,9 +261,7 @@ class VideoSourceCommand(BaseExtensionCommand):
         target: Path | ImagePixelBatch | None = (
             Path(options.input_file).expanduser() if options.input_file else None
         )
-        video_source_specifier = options.video_source or (
-            "file" if target else "camera"
-        )
+        video_source_specifier = options.video_source or ("file" if target else "camera")
         video_source = video_source_registry.resolve(video_source_specifier)
 
         if target is None and video_source.name == "numpy":
@@ -281,13 +271,9 @@ class VideoSourceCommand(BaseExtensionCommand):
                 height=options.synthetic_height,
             )
 
-        output_dir = (
-            Path(options.output_dir).expanduser() if options.output_dir else None
-        )
+        output_dir = Path(options.output_dir).expanduser() if options.output_dir else None
 
-        self.frame_writer = (
-            FrameFileWriter(output_dir) if output_dir is not None else None
-        )
+        self.frame_writer = FrameFileWriter(output_dir) if output_dir is not None else None
 
         print(f"Video source: {video_source.name}")
         print(f"Target: {_format_target(target)}")

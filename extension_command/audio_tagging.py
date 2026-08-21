@@ -1,16 +1,10 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   default model (alias `local` → yamnet):
-#     kiari ext -v audio-tagging ./sample.wav
-#   choose model and top-k:
-#     kiari ext -v audio-tagging --audio-tagging-model yamnet --top-k 10 ./sample.wav
-#   threshold filter and JSON output:
-#     kiari ext -v audio-tagging --threshold 0.1 --json ./sample.wav
-#   write JSON to file:
-#     kiari ext -v audio-tagging --top-k 20 --output-file .tmp/audio_tagging/sample.json ./sample.wav
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/audio_tagging.py" audio-tagging ./sample.wav    # default model (alias `local` -> yamnet)
+#
+#   The examples below omit the `kiari ext -v --plugin ... audio-tagging` prefix:
+#     --audio-tagging-model yamnet --top-k 10 ./sample.wav    # choose model and top-k
+#     --threshold 0.1 --json ./sample.wav    # threshold filter, JSON to stdout
+#     --top-k 20 --output-file .tmp/audio_tagging/sample.json ./sample.wav
 import argparse
 import json
 from collections.abc import Sequence
@@ -43,9 +37,7 @@ class AudioTaggingCommand(BaseExtensionCommand):
         samples, sample_rate = load_audio_samples(input_file_path)
 
         run_context = RunContext(agent_id="audio-tagging-command")
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
 
         audio_tagging_options: AudioTaggingOptions = {}
 
@@ -70,7 +62,7 @@ class AudioTaggingCommand(BaseExtensionCommand):
             "input_file": str(input_file_path),
             "audio_tagging_model": options.audio_tagging_model,
             "sample_rate": sample_rate,
-            "samples": int(len(samples)),
+            "samples": len(samples),
             "duration_ms": round(len(samples) / sample_rate * 1000),
             "top_k": options.top_k,
             "threshold": options.threshold,
@@ -95,9 +87,7 @@ class AudioTaggingCommand(BaseExtensionCommand):
             print("-" * 20)
 
             for index, prediction in enumerate(predictions, 1):
-                print(
-                    f"{index:03d} score={prediction.score:.6f} label={prediction.label}"
-                )
+                print(f"{index:03d} score={prediction.score:.6f} label={prediction.label}")
 
             print("-" * 20)
 

@@ -1,19 +1,13 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   local:
-#     kiari ext tts --tts-model local "Hello, world"
-#   openai:
-#     kiari ext tts --tts-model openai "Hello, world"
-#   google
-#     kiari ext tts --tts-model google "Hello, world"
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/tts.py" tts --tts-model local "Hello, world"
 #
-#   kiari ext -v tts --ignore-cache "Excellent"
-#   kiari ext -v tts --ignore-cache --tts-model openai --instructions "激しく、力強く" "No programming, No life"
-#   kiari ext -v tts --ignore-cache --output-format m4a "こんにちは"
-#   kiari ext -v tts --ignore-cache --ignore-cache --no-play "こんにちは"
+#   The examples below omit the `kiari ext -v --plugin ... tts` prefix:
+#     --tts-model openai "Hello, world"
+#     --tts-model google "Hello, world"
+#     --ignore-cache "Excellent"
+#     --ignore-cache --tts-model openai --instructions "激しく、力強く" "No programming, No life"
+#     --ignore-cache --output-format m4a "こんにちは"
+#     --ignore-cache --no-play "こんにちは"
 import argparse
 from collections.abc import Sequence
 from pathlib import Path
@@ -43,9 +37,7 @@ class TTSCommand(BaseExtensionCommand):
             raise ValueError("No text provided.")
 
         run_context = RunContext(agent_id="tts-command")
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
 
         audio_file_path = await tts_model.text_to_speech(
             text,

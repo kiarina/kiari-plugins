@@ -1,12 +1,8 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   mic:
-#     kiari ext -v scd --asr-model local --output-dir ./.tmp/scd_mic
-#   file:
-#     kiari ext -v scd --input-file ./assets/asr/multi_speaker_audio.mp3 --audio-source file?sample_rate=16000 --asr-model local --output-dir ./.tmp/scd_file
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/scd.py" scd --asr-model local --output-dir ./.tmp/scd_mic    # mic
+#
+#   The examples below omit the `kiari ext -v --plugin ... scd` prefix:
+#     --input-file ./assets/asr/multi_speaker_audio.mp3 --audio-source file?sample_rate=16000 --asr-model local --output-dir ./.tmp/scd_file    # file
 import argparse
 import asyncio
 import json
@@ -14,6 +10,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from kiarina.agi import asr_model
@@ -56,7 +53,7 @@ def _print_debug(chunk_count: int, samples: AudioSamples, probability: float) ->
     )
 
 
-def _voice_metadata(voice: Voice) -> dict:
+def _voice_metadata(voice: Voice) -> dict[str, Any]:
     return {
         "sample_rate": voice.sample_rate,
         "start_timestamp": voice.start_timestamp,
@@ -64,12 +61,12 @@ def _voice_metadata(voice: Voice) -> dict:
         "start_datetime": datetime.fromtimestamp(voice.start_timestamp).isoformat(),
         "end_datetime": datetime.fromtimestamp(voice.end_timestamp).isoformat(),
         "duration_ms": round((voice.end_timestamp - voice.start_timestamp) * 1000),
-        "samples": int(len(voice.samples)),
+        "samples": len(voice.samples),
         "metadata": voice.metadata,
     }
 
 
-def _speech_metadata(speech: Speech) -> dict:
+def _speech_metadata(speech: Speech) -> dict[str, Any]:
     return {
         "kind": speech.kind,
         "speaker_index": speech.speaker_index,
@@ -79,7 +76,7 @@ def _speech_metadata(speech: Speech) -> dict:
         "start_datetime": datetime.fromtimestamp(speech.start_timestamp).isoformat(),
         "end_datetime": datetime.fromtimestamp(speech.end_timestamp).isoformat(),
         "duration_ms": round((speech.end_timestamp - speech.start_timestamp) * 1000),
-        "samples": int(len(speech.samples)),
+        "samples": len(speech.samples),
         "metadata": speech.metadata,
     }
 
@@ -103,7 +100,7 @@ class SavedSpeechFiles:
 
 
 class SpeechFileWriter:
-    def __init__(self, output_dir: Path, *, metadata: dict) -> None:
+    def __init__(self, output_dir: Path, *, metadata: dict[str, Any]) -> None:
         self.output_dir = output_dir
         self.metadata = metadata
         self._index = 0
@@ -149,13 +146,11 @@ class SpeechFileWriter:
             speech_audio_file_paths=speech_audio_file_paths,
         )
 
-    def save_transcripts(
-        self, saved_files: SavedSpeechFiles, texts: list[str]
-    ) -> list[Path]:
+    def save_transcripts(self, saved_files: SavedSpeechFiles, texts: list[str]) -> list[Path]:
         transcript_file_paths: list[Path] = []
 
         for speech_audio_file_path, text in zip(
-            saved_files.speech_audio_file_paths, texts
+            saved_files.speech_audio_file_paths, texts, strict=False
         ):
             transcript_file_path = speech_audio_file_path.with_suffix(".txt")
             transcript_file_path.write_text(text, encoding="utf-8")
@@ -169,19 +164,21 @@ class SpeechFileWriter:
                         "transcript_file": str(transcript_file_path),
                         "transcript_text": text,
                     }
-                    for transcript_file_path, text in zip(transcript_file_paths, texts)
+                    for transcript_file_path, text in zip(
+                        transcript_file_paths, texts, strict=False
+                    )
                 ],
             },
         )
 
         return transcript_file_paths
 
-    def _update_metadata(self, metadata_file_path: Path, values: dict) -> None:
+    def _update_metadata(self, metadata_file_path: Path, values: dict[str, Any]) -> None:
         metadata = json.loads(metadata_file_path.read_text(encoding="utf-8"))
 
         if "speeches" in values and "speeches" in metadata:
             for speech_metadata, speech_values in zip(
-                metadata["speeches"], values["speeches"]
+                metadata["speeches"], values["speeches"], strict=False
             ):
                 speech_metadata.update(speech_values)
 
@@ -277,15 +274,11 @@ class SCDCommand(BaseExtensionCommand):
         options = _parse_args(args)
         self._options = options
         self._run_context = RunContext(agent_id="scd-command")
-        self._cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        self._cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
 
         target = Path(options.input_file).expanduser() if options.input_file else None
 
-        output_dir = (
-            Path(options.output_dir).expanduser() if options.output_dir else None
-        )
+        output_dir = Path(options.output_dir).expanduser() if options.output_dir else None
 
         audio_source_specifier = options.audio_source_specifier or (
             "file" if options.input_file else "mic"
@@ -360,10 +353,7 @@ class SCDCommand(BaseExtensionCommand):
         print("Speeches:")
 
         for index, speech in enumerate(speeches, 1):
-            print(
-                f" - #{index}: "
-                f"{json.dumps(_speech_metadata(speech), ensure_ascii=False)}"
-            )
+            print(f" - #{index}: {json.dumps(_speech_metadata(speech), ensure_ascii=False)}")
 
         saved_files: SavedSpeechFiles | None = None
 
@@ -397,9 +387,7 @@ class SCDCommand(BaseExtensionCommand):
             print("-" * 20)
 
         if self.speech_writer and saved_files:
-            transcript_file_paths = self.speech_writer.save_transcripts(
-                saved_files, texts
-            )
+            transcript_file_paths = self.speech_writer.save_transcripts(saved_files, texts)
 
             for transcript_file_path in transcript_file_paths:
                 print(f"Saved transcript: {transcript_file_path}")

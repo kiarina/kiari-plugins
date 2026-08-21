@@ -1,19 +1,12 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   object detection (alias `object` -> D-FINE):
-#     kiari ext -v image-detection ./assets/jpg/3.jpg
-#   face detection (alias `face` -> YuNet, draws 5-point keypoints):
-#     kiari ext -v image-detection --faces ./assets/image_detection/1.png
-#   choose model explicitly and save an annotated image:
-#     kiari ext -v image-detection --image-detection-model yunet --output-image .tmp/image_detection/out.png ./assets/face.jpg
-#   filter by score and write JSON to file:
-#     kiari ext -v image-detection --score-threshold 0.5 --json --output-file .tmp/image_detection/out.json ./assets/jpg/3.jpg
-#   save cropped objects and ArcFace-aligned faces:
-#     kiari ext -v image-detection --crop-dir .tmp/image_detection_objects/crops --align-dir .tmp/image_detection_objects/aligned ./assets/image_detection/1.png
-#     kiari ext -v image-detection --faces --crop-dir .tmp/image_detection_faces/crops --align-dir .tmp/image_detection_faces/aligned ./assets/image_detection/1.png
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/image_detection.py" image-detection ./assets/jpg/3.jpg    # object detection (alias `object` -> D-FINE)
+#
+#   The examples below omit the `kiari ext -v --plugin ... image-detection` prefix:
+#     --faces ./assets/image_detection/1.png    # face detection (alias `face` -> YuNet, draws 5-point keypoints)
+#     --image-detection-model yunet --output-image .tmp/image_detection/out.png ./assets/face.jpg
+#     --score-threshold 0.5 --json --output-file .tmp/image_detection/out.json ./assets/jpg/3.jpg
+#     --crop-dir .tmp/image_detection_objects/crops --align-dir .tmp/image_detection_objects/aligned ./assets/image_detection/1.png
+#     --faces --crop-dir .tmp/image_detection_faces/crops --align-dir .tmp/image_detection_faces/aligned ./assets/image_detection/1.png
 import argparse
 import json
 import re
@@ -69,16 +62,12 @@ class ImageDetectionCommand(BaseExtensionCommand):
         height, width = pixels.shape[:2]
 
         run_context = RunContext(agent_id="image-detection-command")
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
 
         image_detection_options: ImageDetectionOptions = {}
 
         if options.image_detection_model:
-            image_detection_options["image_detection_model"] = (
-                options.image_detection_model
-            )
+            image_detection_options["image_detection_model"] = options.image_detection_model
 
         detect = detect_faces if options.faces else detect_objects
 
@@ -132,15 +121,11 @@ class ImageDetectionCommand(BaseExtensionCommand):
             for index, detection in enumerate(detections, 1):
                 bbox = ", ".join(f"{v:.3f}" for v in detection.bbox)
                 line = (
-                    f"{index:03d} score={detection.score:.4f} "
-                    f"label={detection.label} bbox=[{bbox}]"
+                    f"{index:03d} score={detection.score:.4f} label={detection.label} bbox=[{bbox}]"
                 )
 
                 if detection.keypoints:
-                    line += (
-                        f" keypoints={len(detection.keypoints)}"
-                        f"({detection.keypoint_type})"
-                    )
+                    line += f" keypoints={len(detection.keypoints)}({detection.keypoint_type})"
 
                 print(line)
 
@@ -194,9 +179,7 @@ class ImageDetectionCommand(BaseExtensionCommand):
         await cost_recorder.flush(run_context)
 
 
-def _draw_detections(
-    image: Image.Image, detections: Sequence[DetectedObject]
-) -> Image.Image:
+def _draw_detections(image: Image.Image, detections: Sequence[DetectedObject]) -> Image.Image:
     annotated = image.copy()
     draw = ImageDraw.Draw(annotated)
     width, height = annotated.size
@@ -227,9 +210,7 @@ def _draw_detections(
     return annotated
 
 
-def _draw_caption(
-    draw: ImageDraw.ImageDraw, x: float, y: float, text: str, color: str
-) -> None:
+def _draw_caption(draw: ImageDraw.ImageDraw, x: float, y: float, text: str, color: str) -> None:
     text_box = draw.textbbox((0, 0), text)
     text_width = text_box[2] - text_box[0]
     text_height = text_box[3] - text_box[1]

@@ -1,17 +1,12 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   local
-#     kiari ext -v asr --asr-model local --output-file .tmp/asr_local/asr.txt ./assets/asr/multi_speaker_audio.mp3
-#     kiari ext -v asr --asr-model local --segments --output-file .tmp/asr_local/asr.srt ./assets/asr/multi_speaker_audio.mp3
-#   openai
-#     kiari ext -v asr --asr-model openai --output-file .tmp/asr_openai/asr.txt ./assets/asr/multi_speaker_audio.mp3
-#     kiari ext -v asr --asr-model openai --segments --output-file .tmp/asr_openai/asr.srt ./assets/asr/multi_speaker_audio.mp3
-#   google
-#     kiari ext -v asr --asr-model google --output-file .tmp/asr_google/asr.txt ./assets/asr/multi_speaker_audio.mp3
-#     kiari ext -v asr --asr-model google --segments --output-file .tmp/asr_google/asr.srt ./assets/asr/multi_speaker_audio.mp3
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/asr.py" asr --asr-model local --output-file .tmp/asr_local/asr.txt ./assets/asr/multi_speaker_audio.mp3
+#
+#   The examples below omit the `kiari ext -v --plugin ... asr` prefix:
+#     --asr-model local --segments --output-file .tmp/asr_local/asr.srt ./assets/asr/multi_speaker_audio.mp3
+#     --asr-model openai --output-file .tmp/asr_openai/asr.txt ./assets/asr/multi_speaker_audio.mp3
+#     --asr-model openai --segments --output-file .tmp/asr_openai/asr.srt ./assets/asr/multi_speaker_audio.mp3
+#     --asr-model google --output-file .tmp/asr_google/asr.txt ./assets/asr/multi_speaker_audio.mp3
+#     --asr-model google --segments --output-file .tmp/asr_google/asr.srt ./assets/asr/multi_speaker_audio.mp3
 import argparse
 from collections.abc import Sequence
 from pathlib import Path
@@ -37,9 +32,7 @@ class ASRCommand(BaseExtensionCommand):
         options = _parse_args(args)
 
         run_context = RunContext(agent_id="asr-command")
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         samples, sample_rate = load_audio_samples(options.input_file)
 
         if options.segments:
@@ -52,9 +45,7 @@ class ASRCommand(BaseExtensionCommand):
                 cost_recorder=cost_recorder,
                 run_context=run_context,
             )
-            text = "\n\n".join(
-                f"{i}\n{segment.to_srt()}" for i, segment in enumerate(segments, 1)
-            )
+            text = "\n\n".join(f"{i}\n{segment.to_srt()}" for i, segment in enumerate(segments, 1))
 
         else:
             text = await asr_model.speech_to_text(

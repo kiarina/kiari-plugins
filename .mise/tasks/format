@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#MISE description="Format and auto-fix lint issues"
+#USAGE flag "--unsafe" help="Apply Ruff unsafe fixes"
+
+set -euo pipefail
+
+unsafe="${usage_unsafe:-false}"
+
+echo "⚙️ Formatting..."
+
+echo "🔧 Running ruff check with auto-fix..."
+ruff_check_args=(check . --fix)
+if [ "$unsafe" = "true" ]; then
+    ruff_check_args+=(--unsafe-fixes)
+fi
+uv run --group lint ruff "${ruff_check_args[@]}"
+
+echo "🔧 Running ruff format..."
+uv run --group lint ruff format .

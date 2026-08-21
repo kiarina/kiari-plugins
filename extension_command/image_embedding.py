@@ -1,16 +1,10 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   add:
-#     kiari ext image-embedding add --store-dir ./.tmp/image_embeddings/object --image-embedding-model object ./sample.jpg
-#   list:
-#     kiari ext image-embedding list --store-dir ./.tmp/image_embeddings/object
-#   search:
-#     kiari ext image-embedding search --store-dir ./.tmp/image_embeddings/object --image-embedding-model object --top-n 10 ./query.jpg
-#   validate (download CIFAR-10 and measure kNN retrieval accuracy):
-#     kiari ext -v image-embedding validate --image-embedding-model object --samples-per-class 20
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/image_embedding.py" image-embedding add --store-dir ./.tmp/image_embeddings/object --image-embedding-model object ./sample.jpg
+#
+#   The examples below omit the `kiari ext -v --plugin ... image-embedding` prefix:
+#     list --store-dir ./.tmp/image_embeddings/object
+#     search --store-dir ./.tmp/image_embeddings/object --image-embedding-model object --top-n 10 ./query.jpg
+#     validate --image-embedding-model object --samples-per-class 20    # download CIFAR-10, measure kNN retrieval accuracy
 import argparse
 import json
 import pickle
@@ -19,7 +13,7 @@ import urllib.request
 from collections.abc import Callable, Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import TypeAlias
+from typing import Any, TypeAlias
 
 import numpy as np
 from jaxtyping import UInt8
@@ -40,9 +34,9 @@ from kiari.cli.ext.extension_command import (
     extension_command_registry,
 )
 
-SearchResult: TypeAlias = tuple[Embedding, float]
-ImagePixelBatch: TypeAlias = UInt8[np.ndarray, "images height width rgb"]
-DatasetBundle: TypeAlias = tuple[list[ImagePixels], list[int], dict[int, str]]
+type SearchResult = tuple[Embedding, float]
+ImagePixelBatch: TypeAlias = UInt8[np.ndarray, "images height width rgb"]  # noqa: UP040, F722
+type DatasetBundle = tuple[list[ImagePixels], list[int], dict[int, str]]
 
 _CIFAR10_URL = "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
 # scikit-learn's figshare mirror of LFW (funneled). Roughly aligned 250x250 JPEGs
@@ -73,7 +67,7 @@ def _load_pixels(input_file_path: Path) -> ImagePixels:
     return pixels
 
 
-def _entry_summary(entry: Embedding) -> dict:
+def _entry_summary(entry: Embedding) -> dict[str, Any]:
     return {
         "id": entry.id,
         "label": entry.metadata.get("label") or entry.id,
@@ -214,7 +208,7 @@ def _dataset_cifar10(
             images.append(all_images[int(chosen)])
             labels.append(label)
 
-    names = {index: name for index, name in enumerate(_CIFAR10_CLASSES)}
+    names = dict(enumerate(_CIFAR10_CLASSES))
     return images, labels, names
 
 
@@ -263,15 +257,11 @@ def _dataset_lfw(
 
     people = sorted(person for person in root_dir.iterdir() if person.is_dir())
     eligible = [
-        person
-        for person in people
-        if len(list(person.glob("*.jpg"))) >= max(min_images, 2)
+        person for person in people if len(list(person.glob("*.jpg"))) >= max(min_images, 2)
     ]
 
     if not eligible:
-        raise ValueError(
-            f"No LFW identities with >= {max(min_images, 2)} images found."
-        )
+        raise ValueError(f"No LFW identities with >= {max(min_images, 2)} images found.")
 
     if num_classes > 0 and len(eligible) > num_classes:
         indices = rng.choice(len(eligible), size=num_classes, replace=False)
@@ -330,15 +320,11 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
         )
 
         if options.command == "add":
-            await self._add(
-                context, ImageEmbeddingStore(Path(options.store_dir)), options
-            )
+            await self._add(context, ImageEmbeddingStore(Path(options.store_dir)), options)
         elif options.command == "list":
             self._list(ImageEmbeddingStore(Path(options.store_dir)), options)
         elif options.command == "search":
-            await self._search(
-                context, ImageEmbeddingStore(Path(options.store_dir)), options
-            )
+            await self._search(context, ImageEmbeddingStore(Path(options.store_dir)), options)
         elif options.command == "validate":
             await self._validate(context, options)
         else:  # pragma: no cover
@@ -352,9 +338,7 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
     ) -> None:
         input_file_path = Path(options.input_file).expanduser()
         pixels = _load_pixels(input_file_path)
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = RunContext(agent_id="image-embedding-command")
 
         embedding = await embed_image(
@@ -425,9 +409,7 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
     ) -> None:
         input_file_path = Path(options.input_file).expanduser()
         pixels = _load_pixels(input_file_path)
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = RunContext(agent_id="image-embedding-search-command")
 
         query = await embed_image(
@@ -484,9 +466,7 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
         options: argparse.Namespace,
     ) -> None:
         loader, align_default = _DATASETS[options.dataset]
-        align_faces = (
-            align_default if options.align_faces is None else options.align_faces
-        )
+        align_faces = align_default if options.align_faces is None else options.align_faces
 
         images, labels, names = loader(
             Path(options.data_dir),
@@ -496,9 +476,7 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
             min_images=options.min_images,
         )
 
-        cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
         run_context = RunContext(agent_id="image-embedding-validate-command")
 
         if align_faces:
@@ -541,14 +519,8 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
         print(f"Dataset: {options.dataset}")
         print(f"Samples: {report['num_samples']} (k={report['k']})")
         print(f"Top-1 kNN accuracy: {report['top1_accuracy'] * 100:.2f}%")
-        print(
-            "Mean same-class similarity:      "
-            f"{report['mean_same_class_similarity']:.4f}"
-        )
-        print(
-            "Mean different-class similarity: "
-            f"{report['mean_different_class_similarity']:.4f}"
-        )
+        print(f"Mean same-class similarity:      {report['mean_same_class_similarity']:.4f}")
+        print(f"Mean different-class similarity: {report['mean_different_class_similarity']:.4f}")
         print(f"Per-class accuracy ({len(report['per_class_accuracy'])} classes):")
         for class_id, accuracy in sorted(report["per_class_accuracy"].items()):
             name = names.get(int(class_id), str(class_id))
@@ -564,7 +536,7 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
         aligned_labels: list[int] = []
         skipped = 0
 
-        for pixels, label in zip(images, labels):
+        for pixels, label in zip(images, labels, strict=True):
             faces = await detect_faces(pixels, run_context=run_context)
 
             if not faces:
@@ -585,7 +557,7 @@ class ImageEmbeddingCommand(BaseExtensionCommand):
         return aligned_images, aligned_labels
 
 
-def _evaluate_knn(vectors: np.ndarray, labels: np.ndarray, *, k: int) -> dict:
+def _evaluate_knn(vectors: np.ndarray, labels: np.ndarray, *, k: int) -> dict[str, Any]:
     # Normalize so cosine similarity reduces to a dot product.
     norms = np.linalg.norm(vectors, axis=1, keepdims=True)
     norms[norms == 0.0] = 1.0
@@ -616,7 +588,7 @@ def _evaluate_knn(vectors: np.ndarray, labels: np.ndarray, *, k: int) -> dict:
     diff = similarity[(~same_mask) & finite]
 
     return {
-        "num_samples": int(len(labels)),
+        "num_samples": len(labels),
         "k": k,
         "top1_accuracy": correct / len(labels),
         "mean_same_class_similarity": float(same.mean()) if same.size else 0.0,

@@ -1,12 +1,8 @@
-# RunSpec:
-#   plugins:
-#     - kiari_plugins/**/*.py
-#
 # Usage:
-#   mic:
-#     kiari ext -v vad --asr-model local --output-dir ./.tmp/vad_mic
-#   file:
-#     kiari ext -v vad --input-file ./assets/asr/multi_speaker_audio.mp3 --audio-source file?sample_rate=16000 --asr-model local --output-dir ./.tmp/vad_file
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/vad.py" vad --asr-model local --output-dir ./.tmp/vad_mic    # mic
+#
+#   The examples below omit the `kiari ext -v --plugin ... vad` prefix:
+#     --input-file ./assets/asr/multi_speaker_audio.mp3 --audio-source file?sample_rate=16000 --asr-model local --output-dir ./.tmp/vad_file    # file
 import argparse
 import asyncio
 import json
@@ -14,6 +10,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from kiarina.agi import asr_model
@@ -50,7 +47,7 @@ def _print_debug(chunk_count: int, samples: AudioSamples, probability: float) ->
     )
 
 
-def _voice_metadata(voice: Voice) -> dict:
+def _voice_metadata(voice: Voice) -> dict[str, Any]:
     return {
         "sample_rate": voice.sample_rate,
         "start_timestamp": voice.start_timestamp,
@@ -58,7 +55,7 @@ def _voice_metadata(voice: Voice) -> dict:
         "start_datetime": datetime.fromtimestamp(voice.start_timestamp).isoformat(),
         "end_datetime": datetime.fromtimestamp(voice.end_timestamp).isoformat(),
         "duration_ms": round((voice.end_timestamp - voice.start_timestamp) * 1000),
-        "samples": int(len(voice.samples)),
+        "samples": len(voice.samples),
         "metadata": voice.metadata,
     }
 
@@ -81,7 +78,7 @@ class SavedVoiceFiles:
 
 
 class VoiceFileWriter:
-    def __init__(self, output_dir: Path, *, metadata: dict) -> None:
+    def __init__(self, output_dir: Path, *, metadata: dict[str, Any]) -> None:
         self.output_dir = output_dir
         self.metadata = metadata
         self._index = 0
@@ -125,7 +122,7 @@ class VoiceFileWriter:
         )
         return transcript_file_path
 
-    def _update_metadata(self, metadata_file_path: Path, values: dict) -> None:
+    def _update_metadata(self, metadata_file_path: Path, values: dict[str, Any]) -> None:
         metadata = json.loads(metadata_file_path.read_text(encoding="utf-8"))
         metadata.update(values)
         metadata_file_path.write_text(
@@ -211,15 +208,11 @@ class VADCommand(BaseExtensionCommand):
         options = _parse_args(args)
         self._options = options
         self._run_context = RunContext(agent_id="vad-command")
-        self._cost_recorder = cost_recorder_registry.resolve(
-            context.run_options.cost_recorder
-        )
+        self._cost_recorder = cost_recorder_registry.resolve(context.run_options.cost_recorder)
 
         target = Path(options.input_file).expanduser() if options.input_file else None
 
-        output_dir = (
-            Path(options.output_dir).expanduser() if options.output_dir else None
-        )
+        output_dir = Path(options.output_dir).expanduser() if options.output_dir else None
 
         audio_source_specifier = (
             options.audio_source
