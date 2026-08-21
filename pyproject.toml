@@ -16,7 +16,7 @@ dependencies = [
 # Per-command dependencies that kiari does not already pull in.
 # Install with `uv sync --all-extras`, or `pip install "kiari-plugins[imageio]"`.
 [project.optional-dependencies]
-# rtdb generate-token-data
+# firebase login
 firebase-admin = [
     "firebase-admin>=7.5.0,<8",
 ]

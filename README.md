@@ -44,14 +44,15 @@ Notes:
 | `image-embedding` | Create, list, search, and validate image embeddings |
 | `video-source` | Inspect frames emitted by kiarina_agi VideoSource |
 | `text-embedding` | Create, list, search, and validate text embeddings |
-| `rtdb` | Read, write, and watch Firebase Realtime Database data |
+| `firebase` | Authenticate against Firebase (`login`) |
+| `firebase-rtdb` | Read, write, and watch Firebase Realtime Database data |
 | `pubsub` | Manage Google Cloud Pub/Sub topics, subscriptions, and messages |
 | `slack` | Post / fetch / watch Slack messages (single-workspace) |
 | `tmp` | Scratch command for testing the plugin path |
 
-`rtdb` takes no token option: it resolves credentials through the
+`firebase-rtdb` takes no token option: it resolves credentials through the
 `kiarina.lib.firebase` / `kiarina.lib.firebase_rtdb` settings. Configure `api_key` and
-`token_data_file_path` there, then seed the token file with `rtdb generate-token-data`.
+`token_data_file_path` there, then seed the token set with `firebase login`.
 
 ## Optional dependencies
 
@@ -59,7 +60,7 @@ Most commands run on what kiari already installs. These two do not:
 
 | Extra | Needed by |
 |---|---|
-| `firebase-admin` | `rtdb generate-token-data` |
+| `firebase-admin` | `firebase login` |
 | `imageio` | `video-source --output-video` |
 
 Install the extra into the same environment as kiari — for local development,

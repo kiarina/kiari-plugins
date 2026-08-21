@@ -1,17 +1,16 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/rtdb.py" rtdb generate-token-data --uid kiarina
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/firebase_rtdb.py" firebase-rtdb get --database-url https://my-project.firebaseio.com --path /watch/test
 #
 #   Authentication is delegated to settings: kiarina.lib.firebase supplies api_key and
 #   token_data_file_path, and kiarina.lib.firebase_rtdb.firebase_settings_key selects which
-#   of them to use. set / get / watch take no token option.
+#   of them to use. Seed the token set with `kiari ext firebase login`.
 #
-#   The examples below omit the `kiari ext -v --plugin ... rtdb` prefix:
+#   The examples below omit the `kiari ext -v --plugin ... firebase-rtdb` prefix:
+#     get --database-url https://my-project.firebaseio.com --path /watch/test --output-file ./.tmp/rtdb/get.json
 #     set --database-url https://my-project.firebaseio.com --path /watch/test '{"message": "hello"}'
 #     set --database-url https://my-project.firebaseio.com --path /watch/test --patch '{"extra": "field"}'
 #     set --database-url https://my-project.firebaseio.com --path /watch/test --from-file ./payload.json
 #     set --database-url https://my-project.firebaseio.com --path /watch/test null    # delete
-#     get --database-url https://my-project.firebaseio.com --path /watch/test
-#     get --database-url https://my-project.firebaseio.com --path /watch/test --output-file ./.tmp/rtdb/get.json
 #     watch --database-url https://my-project.firebaseio.com --path /watch/test
 import argparse
 import asyncio
@@ -22,14 +21,8 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-from kiarina.lib.firebase import (
-    FileTokenStore,
-    exchange_custom_token,
-    settings_manager as firebase_auth_settings_manager,
-    token_manager_registry,
-)
+from kiarina.lib.firebase import token_manager_registry
 from kiarina.lib.firebase_rtdb import get_data, watch_data
-from kiarina.lib.google import settings_manager as google_auth_settings_manager
 
 from kiari.cli.ext.extension_command import (
     BaseExtensionCommand,
@@ -69,48 +62,12 @@ def _load_value(options: argparse.Namespace) -> Any:
         ) from e
 
 
-def _create_custom_token(options: argparse.Namespace) -> str:
-    try:
-        import firebase_admin  # type: ignore[import-untyped]
-        from firebase_admin import (
-            auth,
-            credentials,
-            initialize_app,
-        )
-    except ImportError as e:  # pragma: no cover
-        raise ImportError(
-            "firebase_admin is required to generate token_data. Install the firebase-admin package."
-        ) from e
-
-    google_auth_settings = google_auth_settings_manager.get_settings(
-        options.google_auth_settings_key
-    )
-
-    if google_auth_settings.service_account_file:
-        credential = credentials.Certificate(google_auth_settings.service_account_file)
-    elif service_account_data := google_auth_settings.get_service_account_data():
-        credential = credentials.Certificate(service_account_data)
-    else:
-        raise ValueError(
-            "Google service account is not configured. Set service_account_file "
-            "or service_account_data in kiarina.lib.google settings."
-        )
-
-    try:
-        app = firebase_admin.get_app()
-    except ValueError:
-        app = initialize_app(credential)
-
-    custom_token: bytes = auth.create_custom_token(options.uid, app=app)
-    return custom_token.decode("utf-8")
-
-
 # --------------------------------------------------
 # Main
 # --------------------------------------------------
 
 
-class RTDBCommand(BaseExtensionCommand):
+class FirebaseRTDBCommand(BaseExtensionCommand):
     async def run(
         self,
         context: ExtensionCommandContext,
@@ -124,8 +81,6 @@ class RTDBCommand(BaseExtensionCommand):
             await self._get(options)
         elif options.command == "watch":
             await self._watch(options)
-        elif options.command == "generate-token-data":
-            await self._generate_token_data(options)
         else:  # pragma: no cover
             raise ValueError(f"Unknown command: {options.command}")
 
@@ -205,35 +160,6 @@ class RTDBCommand(BaseExtensionCommand):
 
         print(f"Total received: {received_count}")
 
-    # ----- generate-token-data -----
-
-    async def _generate_token_data(self, options: argparse.Namespace) -> None:
-        firebase_auth_settings = firebase_auth_settings_manager.get_settings(
-            options.firebase_settings_key
-        )
-        custom_token = await asyncio.to_thread(_create_custom_token, options)
-        token_data = await exchange_custom_token(
-            custom_token,
-            firebase_auth_settings.api_key.get_secret_value(),
-        )
-
-        token_data_file_path = (
-            options.token_data_file_path or firebase_auth_settings.token_data_file_path
-        )
-
-        if not token_data_file_path:
-            raise ValueError(
-                "No output path. Pass --token-data-file-path, or set token_data_file_path "
-                "in the kiarina.lib.firebase settings that token_manager_registry reads."
-            )
-
-        output_path = Path(token_data_file_path).expanduser()
-        await FileTokenStore(str(output_path)).set(token_data)
-
-        print(f"Generated token data: {output_path}")
-        print(f"  uid: {options.uid}")
-        print(f"  expires_at: {token_data.expires_at.isoformat()}")
-
 
 def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -286,19 +212,7 @@ def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
         help="Stop after receiving this many events. Default: no limit.",
     )
 
-    # ----- generate-token-data -----
-    generate_token_data_parser = subparsers.add_parser(
-        "generate-token-data",
-        help="Generate a Firebase TokenData JSON file from a service account.",
-    )
-    # fmt: off
-    generate_token_data_parser.add_argument("--uid", default="kiarina", help="Firebase custom token UID.")
-    generate_token_data_parser.add_argument("--token-data-file-path", default=None, help="Output path for TokenData JSON. Defaults to token_data_file_path in the kiarina.lib.firebase settings.")
-    generate_token_data_parser.add_argument("--firebase-settings-key", default=None, help="Settings key passed to kiarina.lib.firebase.settings_manager.get_settings.")
-    generate_token_data_parser.add_argument("--google-auth-settings-key", default=None, help="Settings key passed to kiarina.lib.google.settings_manager.get_settings.")
-    # fmt: on
-
     return parser.parse_args(list(args))
 
 
-extension_command_registry.register("rtdb", RTDBCommand)
+extension_command_registry.register("firebase-rtdb", FirebaseRTDBCommand)
