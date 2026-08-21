@@ -2,8 +2,9 @@
 #   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/firebase_rtdb.py" firebase-rtdb get --database-url https://my-project.firebaseio.com --path /watch/test
 #
 #   Authentication is delegated to settings: kiarina.lib.firebase supplies api_key and
-#   token_data_file_path, and kiarina.lib.firebase_rtdb.firebase_settings_key selects which
-#   of them to use. Seed the token set with `kiari ext firebase login`.
+#   token_file_path, and kiarina.lib.firebase_rtdb.firebase_settings_key selects which
+#   of them to use. Seed the token set with `kiari ext firebase login`, pointing its
+#   --token-file-path at the same file as token_file_path.
 #
 #   The examples below omit the `kiari ext -v --plugin ... firebase-rtdb` prefix:
 #     get --database-url https://my-project.firebaseio.com --path /watch/test --output-file ./.tmp/rtdb/get.json
@@ -88,7 +89,7 @@ class FirebaseRTDBCommand(BaseExtensionCommand):
 
     async def _set(self, options: argparse.Namespace) -> None:
         value = _load_value(options)
-        id_token = await token_manager_registry.get().get_id_token()
+        token = await token_manager_registry.get().get_token()
 
         url = _build_url(options.database_url, options.path)
         method = "PATCH" if options.patch else "PUT"
@@ -97,7 +98,7 @@ class FirebaseRTDBCommand(BaseExtensionCommand):
             response = await client.request(
                 method,
                 url,
-                params={"auth": id_token},
+                params={"auth": token.id_token},
                 json=value,
             )
             response.raise_for_status()
