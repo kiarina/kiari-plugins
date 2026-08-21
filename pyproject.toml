@@ -5,6 +5,7 @@ description = "Plugin implementations for kiari, loadable directly from GitHub"
 authors = [
     { name = "kiarina", email = "kiarinadawa@gmail.com" }
 ]
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 dependencies = [

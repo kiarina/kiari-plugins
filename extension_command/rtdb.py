@@ -1,14 +1,18 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/rtdb.py" rtdb generate-token-data --uid kiarina --token-data-file-path ./.tmp/rtdb/token.json
+#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/rtdb.py" rtdb generate-token-data --uid kiarina
+#
+#   Authentication is delegated to settings: kiarina.lib.firebase supplies api_key and
+#   token_data_file_path, and kiarina.lib.firebase_rtdb.firebase_settings_key selects which
+#   of them to use. set / get / watch take no token option.
 #
 #   The examples below omit the `kiari ext -v --plugin ... rtdb` prefix:
-#     set --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json '{"message": "hello"}'
-#     set --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json --patch '{"extra": "field"}'
-#     set --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json --from-file ./payload.json
-#     set --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json null    # delete
-#     get --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json
-#     get --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json --output-file ./.tmp/rtdb/get.json
-#     watch --database-url https://my-project.firebaseio.com --path /watch/test --token-data-file-path ./.tmp/rtdb/token.json
+#     set --database-url https://my-project.firebaseio.com --path /watch/test '{"message": "hello"}'
+#     set --database-url https://my-project.firebaseio.com --path /watch/test --patch '{"extra": "field"}'
+#     set --database-url https://my-project.firebaseio.com --path /watch/test --from-file ./payload.json
+#     set --database-url https://my-project.firebaseio.com --path /watch/test null    # delete
+#     get --database-url https://my-project.firebaseio.com --path /watch/test
+#     get --database-url https://my-project.firebaseio.com --path /watch/test --output-file ./.tmp/rtdb/get.json
+#     watch --database-url https://my-project.firebaseio.com --path /watch/test
 import argparse
 import asyncio
 import json
@@ -20,13 +24,12 @@ from typing import Any
 import httpx
 from kiarina.lib.firebase import (
     FileTokenStore,
-    TokenManager,
     exchange_custom_token,
     settings_manager as firebase_auth_settings_manager,
+    token_manager_registry,
 )
 from kiarina.lib.firebase_rtdb import get_data, watch_data
 from kiarina.lib.google import settings_manager as google_auth_settings_manager
-from kiarina.utils.file.asyncio import write_json_dict
 
 from kiari.cli.ext.extension_command import (
     BaseExtensionCommand,
@@ -40,16 +43,6 @@ logger = logging.getLogger(__name__)
 # --------------------------------------------------
 # Utilities
 # --------------------------------------------------
-
-
-def _build_token_manager(options: argparse.Namespace) -> TokenManager:
-    firebase_auth_settings = firebase_auth_settings_manager.get_settings(
-        options.firebase_settings_key
-    )
-    return TokenManager(
-        api_key=firebase_auth_settings.api_key.get_secret_value(),
-        token_store=FileTokenStore(options.token_data_file_path),
-    )
 
 
 def _build_url(database_url: str, path: str) -> str:
@@ -140,8 +133,7 @@ class RTDBCommand(BaseExtensionCommand):
 
     async def _set(self, options: argparse.Namespace) -> None:
         value = _load_value(options)
-        token_manager = _build_token_manager(options)
-        id_token = await token_manager.get_id_token()
+        id_token = await token_manager_registry.get().get_id_token()
 
         url = _build_url(options.database_url, options.path)
         method = "PATCH" if options.patch else "PUT"
@@ -163,13 +155,9 @@ class RTDBCommand(BaseExtensionCommand):
     # ----- get -----
 
     async def _get(self, options: argparse.Namespace) -> None:
-        token_manager = _build_token_manager(options)
-        id_token = await token_manager.get_id_token()
-
         data = await get_data(
             database_url=options.database_url,
             path=options.path,
-            id_token=id_token,
         )
 
         text = json.dumps(data, ensure_ascii=False, indent=2)
@@ -187,7 +175,6 @@ class RTDBCommand(BaseExtensionCommand):
     # ----- watch -----
 
     async def _watch(self, options: argparse.Namespace) -> None:
-        token_manager = _build_token_manager(options)
         stop_event = asyncio.Event()
 
         print(f"WATCH {options.database_url}{options.path}")
@@ -200,7 +187,6 @@ class RTDBCommand(BaseExtensionCommand):
             async for event in watch_data(
                 database_url=options.database_url,
                 path=options.path,
-                token_manager=token_manager,
                 stop_event=stop_event,
             ):
                 received_count += 1
@@ -231,11 +217,18 @@ class RTDBCommand(BaseExtensionCommand):
             firebase_auth_settings.api_key.get_secret_value(),
         )
 
-        output_path = Path(options.token_data_file_path).expanduser()
-        await write_json_dict(
-            str(output_path),
-            token_data.model_dump(mode="json"),
+        token_data_file_path = (
+            options.token_data_file_path or firebase_auth_settings.token_data_file_path
         )
+
+        if not token_data_file_path:
+            raise ValueError(
+                "No output path. Pass --token-data-file-path, or set token_data_file_path "
+                "in the kiarina.lib.firebase settings that token_manager_registry reads."
+            )
+
+        output_path = Path(token_data_file_path).expanduser()
+        await FileTokenStore(str(output_path)).set(token_data)
 
         print(f"Generated token data: {output_path}")
         print(f"  uid: {options.uid}")
@@ -252,8 +245,6 @@ def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
     # fmt: off
     common_parser.add_argument("--database-url", required=True, help="Firebase database URL (e.g. https://my-project.firebaseio.com).")
     common_parser.add_argument("--path", default="/", help="Database path (default: /).")
-    common_parser.add_argument("--token-data-file-path", required=True, help="Path to the JSON file holding TokenData, as written by generate-token-data.")
-    common_parser.add_argument("--firebase-settings-key", default=None, help="Settings key passed to kiarina.lib.firebase.settings_manager.get_settings.")
     # fmt: on
 
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -302,7 +293,7 @@ def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
     )
     # fmt: off
     generate_token_data_parser.add_argument("--uid", default="kiarina", help="Firebase custom token UID.")
-    generate_token_data_parser.add_argument("--token-data-file-path", required=True, help="Output path for TokenData JSON.")
+    generate_token_data_parser.add_argument("--token-data-file-path", default=None, help="Output path for TokenData JSON. Defaults to token_data_file_path in the kiarina.lib.firebase settings.")
     generate_token_data_parser.add_argument("--firebase-settings-key", default=None, help="Settings key passed to kiarina.lib.firebase.settings_manager.get_settings.")
     generate_token_data_parser.add_argument("--google-auth-settings-key", default=None, help="Settings key passed to kiarina.lib.google.settings_manager.get_settings.")
     # fmt: on

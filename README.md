@@ -49,6 +49,10 @@ Notes:
 | `slack` | Post / fetch / watch Slack messages (single-workspace) |
 | `tmp` | Scratch command for testing the plugin path |
 
+`rtdb` takes no token option: it resolves credentials through the
+`kiarina.lib.firebase` / `kiarina.lib.firebase_rtdb` settings. Configure `api_key` and
+`token_data_file_path` there, then seed the token file with `rtdb generate-token-data`.
+
 ## Optional dependencies
 
 Most commands run on what kiari already installs. These two do not:
@@ -71,3 +75,7 @@ make upgrade  # bump the lockfile, then run make lint to catch API drift
 ```
 
 ruff and mypy are configured to match kiari; mypy runs in `strict` mode.
+
+## License
+
+MIT
