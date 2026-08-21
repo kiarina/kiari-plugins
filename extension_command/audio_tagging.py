@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/audio_tagging.py" audio-tagging ./sample.wav    # default model (alias `local` -> yamnet)
+#   kiari ext -v audio-tagging ./sample.wav    # default model (alias `local` -> yamnet)
 #
-#   The examples below omit the `kiari ext -v --plugin ... audio-tagging` prefix:
+#   The examples below omit the `kiari ext -v audio-tagging` prefix:
 #     --audio-tagging-model yamnet --top-k 10 ./sample.wav    # choose model and top-k
 #     --threshold 0.1 --json ./sample.wav    # threshold filter, JSON to stdout
 #     --top-k 20 --output-file .tmp/audio_tagging/sample.json ./sample.wav

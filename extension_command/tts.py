@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/tts.py" tts --tts-model local "Hello, world"
+#   kiari ext -v tts --tts-model local "Hello, world"
 #
-#   The examples below omit the `kiari ext -v --plugin ... tts` prefix:
+#   The examples below omit the `kiari ext -v tts` prefix:
 #     --tts-model openai "Hello, world"
 #     --tts-model google "Hello, world"
 #     --ignore-cache "Excellent"

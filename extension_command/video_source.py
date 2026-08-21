@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/video_source.py" video-source --output-dir ./.tmp/video_source_camera --output-video    # camera
+#   kiari ext -v video-source --output-dir ./.tmp/video_source_camera --output-video    # camera
 #
-#   The examples below omit the `kiari ext -v --plugin ... video-source` prefix:
+#   The examples below omit the `kiari ext -v video-source` prefix:
 #     --input-file ./assets/video/3.mp4 --output-dir ./.tmp/video_source_file --output-video    # file
 import argparse
 import json

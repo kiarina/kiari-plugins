@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/pubsub.py" pubsub create-topic --project-id my-project --topic-id my-topic
+#   kiari ext -v pubsub create-topic --project-id my-project --topic-id my-topic
 #
-#   The examples below omit the `kiari ext -v --plugin ... pubsub` prefix:
+#   The examples below omit the `kiari ext -v pubsub` prefix:
 #     delete-topic --project-id my-project --topic-id my-topic
 #     create-subscription --project-id my-project --topic-id my-topic --subscription-id my-sub
 #     delete-subscription --project-id my-project --subscription-id my-sub

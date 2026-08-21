@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/asr.py" asr --asr-model local --output-file .tmp/asr_local/asr.txt ./assets/asr/multi_speaker_audio.mp3
+#   kiari ext -v asr --asr-model local --output-file .tmp/asr_local/asr.txt ./assets/asr/multi_speaker_audio.mp3
 #
-#   The examples below omit the `kiari ext -v --plugin ... asr` prefix:
+#   The examples below omit the `kiari ext -v asr` prefix:
 #     --asr-model local --segments --output-file .tmp/asr_local/asr.srt ./assets/asr/multi_speaker_audio.mp3
 #     --asr-model openai --output-file .tmp/asr_openai/asr.txt ./assets/asr/multi_speaker_audio.mp3
 #     --asr-model openai --segments --output-file .tmp/asr_openai/asr.srt ./assets/asr/multi_speaker_audio.mp3

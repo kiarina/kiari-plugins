@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/vad.py" vad --asr-model local --output-dir ./.tmp/vad_mic    # mic
+#   kiari ext -v vad --asr-model local --output-dir ./.tmp/vad_mic    # mic
 #
-#   The examples below omit the `kiari ext -v --plugin ... vad` prefix:
+#   The examples below omit the `kiari ext -v vad` prefix:
 #     --input-file ./assets/asr/multi_speaker_audio.mp3 --audio-source file?sample_rate=16000 --asr-model local --output-dir ./.tmp/vad_file    # file
 import argparse
 import asyncio

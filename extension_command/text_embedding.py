@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/text_embedding.py" text-embedding add --store-dir ./.tmp/text_embeddings --text-embedding-model local "Apple SiliconでローカルLLMを動かす"
+#   kiari ext -v text-embedding add --store-dir ./.tmp/text_embeddings --text-embedding-model local "Apple SiliconでローカルLLMを動かす"
 #
-#   The examples below omit the `kiari ext -v --plugin ... text-embedding` prefix:
+#   The examples below omit the `kiari ext -v text-embedding` prefix:
 #     add --store-dir ./.tmp/text_embeddings --input-file ./note.txt --label note-1
 #     list --store-dir ./.tmp/text_embeddings
 #     search --store-dir ./.tmp/text_embeddings --text-embedding-model local --top-n 10 "日本語検索に強い埋め込み"

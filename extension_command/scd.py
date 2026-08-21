@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/scd.py" scd --asr-model local --output-dir ./.tmp/scd_mic    # mic
+#   kiari ext -v scd --asr-model local --output-dir ./.tmp/scd_mic    # mic
 #
-#   The examples below omit the `kiari ext -v --plugin ... scd` prefix:
+#   The examples below omit the `kiari ext -v scd` prefix:
 #     --input-file ./assets/asr/multi_speaker_audio.mp3 --audio-source file?sample_rate=16000 --asr-model local --output-dir ./.tmp/scd_file    # file
 import argparse
 import asyncio

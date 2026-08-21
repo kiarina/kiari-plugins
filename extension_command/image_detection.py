@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/image_detection.py" image-detection ./assets/jpg/3.jpg    # object detection (alias `object` -> D-FINE)
+#   kiari ext -v image-detection ./assets/jpg/3.jpg    # object detection (alias `object` -> D-FINE)
 #
-#   The examples below omit the `kiari ext -v --plugin ... image-detection` prefix:
+#   The examples below omit the `kiari ext -v image-detection` prefix:
 #     --faces ./assets/image_detection/1.png    # face detection (alias `face` -> YuNet, draws 5-point keypoints)
 #     --image-detection-model yunet --output-image .tmp/image_detection/out.png ./assets/face.jpg
 #     --score-threshold 0.5 --json --output-file .tmp/image_detection/out.json ./assets/jpg/3.jpg

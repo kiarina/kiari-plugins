@@ -1,5 +1,5 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/tmp.py" tmp
+#   kiari ext -v tmp
 import argparse
 from collections.abc import Sequence
 

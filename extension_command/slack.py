@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/slack.py" slack post-message --channel C01234567 "hello"
+#   kiari ext -v slack post-message --channel C01234567 "hello"
 #
-#   The examples below omit the `kiari ext -v --plugin ... slack` prefix:
+#   The examples below omit the `kiari ext -v slack` prefix:
 #     post-message --channel C01234567 --thread-ts 1700000000.000100 "reply"
 #     get-channel-messages --channel C01234567 --limit 20
 #     watch-channel

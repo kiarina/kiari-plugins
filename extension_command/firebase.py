@@ -1,5 +1,5 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/firebase.py" firebase login --project-id my-project --uid kiarina
+#   kiari ext -v firebase login --project-id my-project --uid kiarina
 #
 #   login mints a custom token with the credential that kiarina.lib.google resolves, exchanges
 #   it for a Firebase token set, and writes it to token_file_path in the kiarina.lib.firebase
@@ -23,7 +23,7 @@
 #   settings have nowhere to hold them. Where it lands is not an argument, so that login
 #   and the readers cannot disagree about the path.
 #
-#   The examples below omit the `kiari ext -v --plugin ... firebase` prefix:
+#   The examples below omit the `kiari ext -v firebase` prefix:
 #     login --project-id my-project --uid kiarina
 #     login --project-id my-project --uid kiarina --firebase-settings-key staging
 #     login --project-id my-project --uid kiarina --google-auth-settings-key user --service-account-id sa@my-project.iam.gserviceaccount.com

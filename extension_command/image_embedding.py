@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/image_embedding.py" image-embedding add --store-dir ./.tmp/image_embeddings/object --image-embedding-model object ./sample.jpg
+#   kiari ext -v image-embedding add --store-dir ./.tmp/image_embeddings/object --image-embedding-model object ./sample.jpg
 #
-#   The examples below omit the `kiari ext -v --plugin ... image-embedding` prefix:
+#   The examples below omit the `kiari ext -v image-embedding` prefix:
 #     list --store-dir ./.tmp/image_embeddings/object
 #     search --store-dir ./.tmp/image_embeddings/object --image-embedding-model object --top-n 10 ./query.jpg
 #     validate --image-embedding-model object --samples-per-class 20    # download CIFAR-10, measure kNN retrieval accuracy

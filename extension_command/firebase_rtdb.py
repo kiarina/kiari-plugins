@@ -1,12 +1,12 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/firebase_rtdb.py" firebase-rtdb get --database-url https://my-project.firebaseio.com --path /watch/test
+#   kiari ext -v firebase-rtdb get --database-url https://my-project.firebaseio.com --path /watch/test
 #
 #   Authentication is delegated to settings: kiarina.lib.firebase supplies api_key and
 #   token_file_path, and kiarina.lib.firebase_rtdb.firebase_settings_key selects which
 #   of them to use. Seed the token set with `kiari ext firebase login`, which writes it to
 #   the same token_file_path.
 #
-#   The examples below omit the `kiari ext -v --plugin ... firebase-rtdb` prefix:
+#   The examples below omit the `kiari ext -v firebase-rtdb` prefix:
 #     get --database-url https://my-project.firebaseio.com --path /watch/test --output-file ./.tmp/rtdb/get.json
 #     set --database-url https://my-project.firebaseio.com --path /watch/test '{"message": "hello"}'
 #     set --database-url https://my-project.firebaseio.com --path /watch/test --patch '{"extra": "field"}'

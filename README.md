@@ -6,15 +6,47 @@ kiari resolves `--plugin` patterns against the local filesystem **or straight fr
 so nothing here has to be installed as a package. Point `--plugin` at a file in this
 repository and its commands become available in your kiari runtime.
 
-## Usage
+## Setup
+
+Do this once, and every command in this repository is available as a plain
+`kiari ext <command>`. The `# Usage:` block in each plugin file assumes you have.
+
+Create a profile and add this repository's `extension_command/` directory to the RunSpec
+it creates (`~/.config/kiari/profiles/plugins/run_spec.yaml`):
+
+```sh
+kiari profile new plugins
+```
+
+```yaml
+plugins:
+  - "@kiarina/kiari-plugins/extension_command/"
+```
+
+Make it the current profile:
+
+```sh
+kiari profile use plugins
+```
+
+From here on, no flags are needed:
+
+```sh
+kiari ext asr --asr-model local ./sample.mp3
+```
+
+To leave your current profile alone, skip `profile use` and select it per run with `-p`:
+
+```sh
+kiari ext -p plugins asr --asr-model local ./sample.mp3
+```
+
+## Usage without a profile
+
+A single file, or the whole directory, loaded straight from GitHub:
 
 ```sh
 kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/asr.py" asr --asr-model local ./sample.mp3
-```
-
-Load every extension command at once, and list what became available:
-
-```sh
 kiari ext --plugin "@kiarina/kiari-plugins/extension_command/"
 ```
 
@@ -27,6 +59,29 @@ Notes:
 - Append `@<commit-hash>` to pin a revision, e.g.
   `@kiarina/kiari-plugins/extension_command/asr.py@a1b2c3d`. Without it, `main` is used.
 - Every plugin file starts with a `# Usage:` comment block holding its own examples.
+
+## Refreshing the cache
+
+**A cached directory is served as-is: kiari does not re-check GitHub for it.** Once
+`@kiarina/kiari-plugins/extension_command/` has been resolved, later runs list the files
+already in `~/.cache/kiari/github_files/` and never learn about files added upstream.
+A command you know exists here simply will not be found. Pass `--github-ignore-cache`
+(or set `KIARI_GITHUB_IGNORE_CACHE=1`) to re-fetch:
+
+```sh
+kiari ext --github-ignore-cache asr --asr-model local ./sample.mp3
+```
+
+Refreshing adds and overwrites, but never prunes. A plugin **deleted or renamed** upstream
+stays in the cache and keeps registering its command, so a stale copy can shadow a rename
+long after it is gone from this repository. Delete the cached directory to be sure:
+
+```sh
+rm -rf ~/.cache/kiari/github_files/kiarina/kiari-plugins
+```
+
+Pinning with `@<commit-hash>` does not help here — the cache path ignores the revision, so
+a pinned spec and `main` share one directory.
 
 ## Extension commands
 

@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v --plugin "@kiarina/kiari-plugins/extension_command/audio_embedding.py" audio-embedding add --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker ./sample.wav
+#   kiari ext -v audio-embedding add --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker ./sample.wav
 #
-#   The examples below omit the `kiari ext -v --plugin ... audio-embedding` prefix:
+#   The examples below omit the `kiari ext -v audio-embedding` prefix:
 #     list --store-dir ./.tmp/audio_embeddings/speaker
 #     search --store-dir ./.tmp/audio_embeddings/speaker --audio-embedding-model speaker --top-n 10 ./query.wav
 import argparse

@@ -24,9 +24,9 @@ kiari 本体の plugin 機構・registry・RunSpec の正典は kiari リポジ�
 ## plugin を追加するとき
 
 1. family ごとのディレクトリへ `.py` を 1 ファイル置く
-2. 冒頭に `# Usage:` コメントを書く。1 行目は
-   `kiari ext -v --plugin "@kiarina/kiari-plugins/<dir>/<file>.py" <name> ...` のフル形式、
-   2 行目以降は prefix を省略して引数だけを並べる
+2. 冒頭に `# Usage:` コメントを書く。1 行目は `kiari ext -v <name> ...` の形式で、
+   2 行目以降は prefix を省略して引数だけを並べる。`--plugin` は書かない
+   （README の Setup にある profile 経由のロードを前提とする）
 3. import 時の副作用として registry へ register する
 4. kiari が既に依存していない依存を使うなら `[project.optional-dependencies]` へ extra を足し、
    README の表にも 1 行足す
