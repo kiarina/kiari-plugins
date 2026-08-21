@@ -5,13 +5,17 @@
 #   it for a Firebase token set, and writes it where token_manager_registry reads from. Every
 #   other command that talks to Firebase picks it up from there.
 #
-#   A service account key signs the token locally. Any other credential (application default,
-#   user account, impersonation) needs --service-account-id so the IAM API can sign for it.
+#   How the token gets signed depends on which credential kiarina.lib.google resolves:
+#     service account key  ->  signed locally with its private key
+#     impersonation        ->  signed by the target principal through the IAM API
+#     GCE / Cloud Run      ->  signer discovered from the metadata server
+#     user account         ->  nothing to sign with, so --service-account-id is required
+#   Application default credentials resolve to one of the first three, depending on the host.
 #
 #   The examples below omit the `kiari ext -v --plugin ... firebase` prefix:
 #     login --uid kiarina --token-data-file-path ./.tmp/firebase/token.json
 #     login --uid kiarina --firebase-settings-key staging
-#     login --uid kiarina --google-auth-settings-key default --service-account-id sa@my-project.iam.gserviceaccount.com
+#     login --uid kiarina --google-auth-settings-key user --service-account-id sa@my-project.iam.gserviceaccount.com
 import argparse
 import asyncio
 import logging
@@ -141,7 +145,7 @@ def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
     login_parser.add_argument("--token-data-file-path", default=None, help="Where to store the token set. Defaults to token_data_file_path in the kiarina.lib.firebase settings.")
     login_parser.add_argument("--firebase-settings-key", default=None, help="Settings key passed to kiarina.lib.firebase.settings_manager.get_settings.")
     login_parser.add_argument("--google-auth-settings-key", default=None, help="Settings key passed to kiarina.lib.google.get_credentials.")
-    login_parser.add_argument("--service-account-id", default=None, help="Service account email used to sign the custom token via the IAM API. Required only when the resolved credential cannot sign locally (i.e. it is not a service account key).")
+    login_parser.add_argument("--service-account-id", default=None, help="Service account email whose iam.serviceAccounts.signBlob permission signs the custom token. Needed only for user account credentials; service account keys, impersonation, and GCE metadata each resolve a signer on their own.")
     # fmt: on
 
     return parser.parse_args(list(args))
