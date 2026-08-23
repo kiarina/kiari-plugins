@@ -30,15 +30,20 @@
 import argparse
 import asyncio
 import logging
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
 from kiarina.lib.firebase import (
     FileTokenStore,
     exchange_custom_token,
-    settings_manager as firebase_auth_settings_manager,
+    settings_manager as firebase_settings_manager,
 )
-from kiarina.lib.google import Credentials, get_credentials
+from kiarina.lib.google import (
+    Credentials,
+    get_credentials,
+    settings_manager as google_settings_manager,
+)
 
 from kiari.cli.ext.extension_command import (
     BaseExtensionCommand,
@@ -49,9 +54,97 @@ from kiari.cli.ext.extension_command import (
 logger = logging.getLogger(__name__)
 
 
+class ActionableError(Exception):
+    """An error whose message already says what to do about it.
+
+    run() prints the message and exits: a traceback only buries the instruction, and
+    click's error panel wraps any command in it out of copy-paste shape.
+    """
+
+
 # --------------------------------------------------
 # Utilities
 # --------------------------------------------------
+
+
+def _iam_member(credentials: Credentials) -> str:
+    """The --member string for the principal the credential authenticates as."""
+    # An impersonated credential signs as its target, but the grant belongs to the
+    # source credential that borrows it.
+    source = getattr(credentials, "_source_credentials", None)
+
+    if source is not None:
+        credentials = source
+
+    for attr in ("service_account_email", "signer_email"):
+        email = getattr(credentials, attr, None)
+
+        if email and email != "default":
+            return f"serviceAccount:{email}"
+
+    account = getattr(credentials, "account", None)
+
+    if account:
+        return f"user:{account}"
+
+    # gcloud leaves "account" empty in the ADC file, so fall back to a substitution
+    # that resolves to the same principal when the command is pasted into a shell.
+    return 'user:"$(gcloud config get-value account)"'
+
+
+def _sign_blob_remediation(
+    error: Exception,
+    *,
+    credentials: Credentials,
+    service_account_id: str | None,
+) -> str | None:
+    """The fix for a signBlob denial, or None if the error is something else."""
+    if "iam.serviceAccounts.signBlob" not in str(error):
+        return None
+
+    # Without --service-account-id the signer comes from the credential itself, which
+    # only exposes an email when it already impersonates a service account.
+    target = service_account_id or getattr(credentials, "signer_email", None)
+
+    if not target:
+        return None
+
+    member = _iam_member(credentials)
+    role = "roles/iam.serviceAccountTokenCreator"
+
+    # Service account emails carry their project, and gcloud needs it to address the
+    # project-level policy. Anything else (appspot, developer) is left alone.
+    _, _, domain = target.partition("@")
+    project = domain.removesuffix(".iam.gserviceaccount.com")
+    project = project if project != domain else None
+
+    grants = [
+        (
+            "this service account only",
+            f"gcloud iam service-accounts add-iam-policy-binding {target}"
+            + (f" --project {project}" if project else "")
+            + f" --member {member} --role {role}",
+        )
+    ]
+
+    if project:
+        grants.append(
+            (
+                f"every service account in {project}, including ones added later",
+                f"gcloud projects add-iam-policy-binding {project} --member {member} --role {role}",
+            )
+        )
+
+    offered = "\n\n".join(f"  # {scope}\n  {command}" for scope, command in grants)
+
+    return (
+        f"Not allowed to sign the custom token as {target}: the credential needs "
+        "iam.serviceAccounts.signBlob on that service account. Grant it with\n\n"
+        f"{offered}\n\n"
+        "or point --google-auth-settings-key at a kiarina.lib.google config that resolves a "
+        "signer on its own -- a service account key or impersonate_service_account -- which "
+        "signs locally and makes --service-account-id unnecessary."
+    )
 
 
 def _create_custom_token(options: argparse.Namespace, *, project_id: str) -> str:
@@ -63,11 +156,19 @@ def _create_custom_token(options: argparse.Namespace, *, project_id: str) -> str
             initialize_app,
         )
     except ImportError as e:  # pragma: no cover
-        raise ImportError(
+        raise ActionableError(
             "firebase_admin is required to log in. Install the firebase-admin package."
         ) from e
 
-    google_credentials = get_credentials(options.google_auth_settings_key)
+    settings = google_settings_manager.get_settings(options.google_auth_settings_key)
+
+    if settings.type != "service_account" and not options.service_account_id:
+        raise ActionableError(
+            "The credential resolved by kiarina.lib.google is not a service account, "
+            "so --service-account-id is required to sign the custom token."
+        )
+
+    google_credentials = get_credentials(settings=settings)
 
     # firebase_admin is an optional import, so its base class is only reachable from here.
     class _ResolvedCredential(credentials.Base):  # type: ignore[misc]
@@ -84,7 +185,20 @@ def _create_custom_token(options: argparse.Namespace, *, project_id: str) -> str
     except ValueError:
         app = initialize_app(_ResolvedCredential(), app_options)
 
-    custom_token: bytes = auth.create_custom_token(options.uid, app=app)
+    try:
+        custom_token: bytes = auth.create_custom_token(options.uid, app=app)
+    except auth.TokenSignError as e:
+        remediation = _sign_blob_remediation(
+            e,
+            credentials=google_credentials,
+            service_account_id=options.service_account_id,
+        )
+
+        if remediation is None:
+            raise
+
+        raise ActionableError(remediation) from e
+
     return custom_token.decode("utf-8")
 
 
@@ -101,20 +215,24 @@ class FirebaseCommand(BaseExtensionCommand):
     ) -> None:
         options = _parse_args(args, prog=self.name)
 
-        if options.command == "login":
-            await self._login(options)
-        else:  # pragma: no cover
-            raise ValueError(f"Unknown command: {options.command}")
+        try:
+            if options.command == "login":
+                await self._login(options)
+            else:  # pragma: no cover
+                raise ValueError(f"Unknown command: {options.command}")
+        except ActionableError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            raise SystemExit(1) from None
 
     # ----- login -----
 
     async def _login(self, options: argparse.Namespace) -> None:
-        firebase_auth_settings = firebase_auth_settings_manager.get_settings(
+        firebase_auth_settings = firebase_settings_manager.get_settings(
             options.firebase_settings_key
         )
 
         if not firebase_auth_settings.token_file_path:
-            raise ValueError(
+            raise ActionableError(
                 "No output path. Set token_file_path in the kiarina.lib.firebase settings "
                 "(KIARINA_LIB_FIREBASE_TOKEN_FILE_PATH); token_manager_registry reads the "
                 "token set back from there."
