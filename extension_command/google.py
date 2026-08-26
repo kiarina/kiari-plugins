@@ -1,7 +1,7 @@
 # Usage:
-#   kiari ext -v google --google-settings-key hoge
+#   kiari ext -v google login --google-settings-key hoge
 #
-#   The examples below omit the `kiari ext -v google` prefix:
+#   The examples below omit the `kiari ext -v google login` prefix:
 #     --google-settings-key hoge --port 8080
 #     --scope https://www.googleapis.com/auth/cloud-platform --scope https://www.googleapis.com/auth/drive --scope https://www.googleapis.com/auth/spreadsheets
 import argparse
@@ -25,6 +25,10 @@ class GoogleCommand(BaseExtensionCommand):
         args: Sequence[str],
     ) -> None:
         options = _parse_args(args, prog=self.name)
+
+        if options.command != "login":  # pragma: no cover
+            raise ValueError(f"Unknown command: {options.command}")
+
         settings = settings_manager.get_settings(options.google_settings_key)
         scopes = options.scopes if options.scopes is not None else settings.scopes
 
@@ -79,21 +83,31 @@ def _create_flow(
 
 
 def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        prog=f"kiari ext {prog}",
-        description="Authenticate a Google user account and output its credentials.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""Examples:
-  kiari ext google --google-settings-key hoge
-  kiari ext google \\
+    examples = """Examples:
+  kiari ext google login --google-settings-key hoge
+  kiari ext google login \\
     --scope https://www.googleapis.com/auth/cloud-platform \\
     --scope https://www.googleapis.com/auth/drive \\
-    --scope https://www.googleapis.com/auth/spreadsheets""",
+    --scope https://www.googleapis.com/auth/spreadsheets"""
+
+    parser = argparse.ArgumentParser(
+        prog=f"kiari ext {prog}",
+        description="Manage Google authentication.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=examples,
+    )
+
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    login_parser = subparsers.add_parser(
+        "login",
+        help="Authenticate a user account and output its credentials.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=examples,
     )
     # fmt: off
-    parser.add_argument("--google-settings-key", default=None, help="kiarina-lib-google settings key. Uses the default key when omitted.")
-    parser.add_argument("--scope", dest="scopes", action="append", default=None, help="OAuth scope. Repeatable. Overrides configured scopes when provided.")
-    parser.add_argument("--port", type=int, default=8080, help="Local OAuth callback server port. Default: 8080.")
+    login_parser.add_argument("--google-settings-key", default=None, help="kiarina-lib-google settings key. Uses the default key when omitted.")
+    login_parser.add_argument("--scope", dest="scopes", action="append", default=None, help="OAuth scope. Repeatable. Overrides configured scopes when provided.")
+    login_parser.add_argument("--port", type=int, default=8080, help="Local OAuth callback server port. Default: 8080.")
     # fmt: on
     return parser.parse_args(list(args))
 
