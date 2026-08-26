@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    env:
+      MISE_GITHUB_ATTESTATIONS: "false"
+      NO_COLOR: "1"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install mise
+        uses: jdx/mise-action@v4.3.0
+        with:
+          version: 2026.8.14
+          cache: true
+          install: false
+
+      - name: Setup Python via mise
+        run: |
+          mise use python@${{ matrix.python-version }}
+          mise install
+
+      - name: Install dependencies
+        run: mise exec -- uv sync --all-extras --all-groups
+
+      - name: Run lint
+        run: mise exec -- make lint
+
+      - name: Audit dependencies
+        run: mise exec -- uv run --with pip-audit pip-audit
