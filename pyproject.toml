@@ -20,6 +20,10 @@ dependencies = [
 firebase-admin = [
     "firebase-admin>=7.5.0,<8",
 ]
+# google user account authentication
+google-auth-oauthlib = [
+    "google-auth-oauthlib>=1.2.2,<2",
+]
 # video-source --output-video
 imageio = [
     "imageio>=2.37.4,<3",

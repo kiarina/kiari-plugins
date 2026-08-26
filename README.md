@@ -109,6 +109,7 @@ revision, so a pinned spec and `main` share one directory.
 | `text-embedding` | Create, list, search, and validate text embeddings |
 | `firebase` | Authenticate against Firebase (`login`) |
 | `firebase-rtdb` | Read, write, and watch Firebase Realtime Database data |
+| `google` | Authenticate a Google user account and output its credentials |
 | `pubsub` | Manage Google Cloud Pub/Sub topics, subscriptions, and messages |
 | `slack` | Post / fetch / watch Slack messages (single-workspace) |
 | `tmp` | Scratch command for testing the plugin path |
@@ -119,13 +120,19 @@ revision, so a pinned spec and `main` share one directory.
 `firebase login --project-id ... --uid ...`, which writes it to that same
 `token_file_path`.
 
+`google` resolves a `user_account` configuration from `kiarina.lib.google`. Pass
+`--google-settings-key` to select a named configuration, or omit it to use the default.
+It always prints the authorized user credentials JSON and also saves it to
+`authorized_user_file` when that setting is configured.
+
 ## Optional dependencies
 
-Most commands run on what kiari already installs. These two do not:
+Most commands run on what kiari already installs. These commands do not:
 
 | Extra | Needed by |
 |---|---|
 | `firebase-admin` | `firebase login` |
+| `google-auth-oauthlib` | `google` |
 | `imageio` | `video-source --output-video` |
 
 Install the extra into the same environment as kiari — for local development,
