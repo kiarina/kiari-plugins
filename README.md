@@ -111,6 +111,7 @@ revision, so a pinned spec and `main` share one directory.
 | `firebase-rtdb` | Read, write, and watch Firebase Realtime Database data |
 | `google` | Authenticate a Google user account and output its credentials |
 | `pubsub` | Manage Google Cloud Pub/Sub topics, subscriptions, and messages |
+| `redisearch` | Migrate a RediSearch index to an explicitly supplied schema |
 | `slack` | Post / fetch / watch Slack messages (single-workspace) |
 | `tmp` | Scratch command for testing the plugin path |
 
@@ -132,6 +133,28 @@ kiari ext google login \
   --scope https://www.googleapis.com/auth/drive \
   --scope https://www.googleapis.com/auth/spreadsheets
 ```
+
+`redisearch migrate` resolves named `kiarina.lib.redis` and
+`kiarina.lib.redisearch` settings, using each settings manager's default when its
+key option is omitted. The target schema is required and can come from either a
+JSON/YAML file or a no-argument Python provider:
+
+```sh
+kiari ext redisearch migrate \
+  --redis-settings-key hoge \
+  --redisearch-settings-key fuga \
+  --schema-file ./redisearch-schema.yaml
+
+kiari ext redisearch migrate \
+  --schema-provider myapp.memory_schema:get_redisearch_schema
+```
+
+`--schema-file` and `--schema-provider` are mutually exclusive. A schema file may
+contain either a top-level field list or an object with a `fields` key. A provider
+uses kiarina's `module:object` import-path format, takes no arguments, and returns a
+`RedisearchSchema`, a field list, or an object with a `fields` key. Migration keeps
+the underlying Redis Hash documents and rebuilds the index only when its schema has
+changed. It fails before changing the index when deletion protection is enabled.
 
 ## Optional dependencies
 
