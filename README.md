@@ -123,7 +123,15 @@ revision, so a pinned spec and `main` share one directory.
 `google` resolves a `user_account` configuration from `kiarina.lib.google`. Pass
 `--google-settings-key` to select a named configuration, or omit it to use the default.
 It always prints the authorized user credentials JSON and also saves it to
-`authorized_user_file` when that setting is configured.
+`authorized_user_file` when that setting is configured. Repeat `--scope` to override the
+configured scopes for one authentication run:
+
+```sh
+kiari ext google \
+  --scope https://www.googleapis.com/auth/cloud-platform \
+  --scope https://www.googleapis.com/auth/drive \
+  --scope https://www.googleapis.com/auth/spreadsheets
+```
 
 ## Optional dependencies
 

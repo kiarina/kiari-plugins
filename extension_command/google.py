@@ -3,6 +3,7 @@
 #
 #   The examples below omit the `kiari ext -v google` prefix:
 #     --google-settings-key hoge --port 8080
+#     --scope https://www.googleapis.com/auth/cloud-platform --scope https://www.googleapis.com/auth/drive --scope https://www.googleapis.com/auth/spreadsheets
 import argparse
 from collections.abc import Sequence
 from pathlib import Path
@@ -25,9 +26,10 @@ class GoogleCommand(BaseExtensionCommand):
     ) -> None:
         options = _parse_args(args, prog=self.name)
         settings = settings_manager.get_settings(options.google_settings_key)
+        scopes = options.scopes if options.scopes is not None else settings.scopes
 
-        _validate_settings(settings)
-        flow = _create_flow(settings)
+        _validate_settings(settings, scopes=scopes)
+        flow = _create_flow(settings, scopes=scopes)
         credentials = flow.run_local_server(port=options.port)
         credentials_json = credentials.to_json()
 
@@ -41,13 +43,13 @@ class GoogleCommand(BaseExtensionCommand):
             print(f"Credentials saved to: {output_path}")
 
 
-def _validate_settings(settings: GoogleSettings) -> None:
+def _validate_settings(settings: GoogleSettings, *, scopes: list[str]) -> None:
     if settings.type != "user_account":
         raise ValueError(
             f"Google settings must use type 'user_account', but got {settings.type!r}."
         )
 
-    if not settings.scopes:
+    if not scopes:
         raise ValueError("Google user account scopes are required.")
 
     if not settings.client_secret_data and not settings.client_secret_file:
@@ -56,17 +58,21 @@ def _validate_settings(settings: GoogleSettings) -> None:
         )
 
 
-def _create_flow(settings: GoogleSettings) -> InstalledAppFlow:
+def _create_flow(
+    settings: GoogleSettings,
+    *,
+    scopes: list[str],
+) -> InstalledAppFlow:
     if client_secret_data := settings.get_client_secret_data():
         return InstalledAppFlow.from_client_config(
             client_secret_data,
-            scopes=settings.scopes,
+            scopes=scopes,
         )
 
     if settings.client_secret_file:
         return InstalledAppFlow.from_client_secrets_file(
             settings.client_secret_file,
-            scopes=settings.scopes,
+            scopes=scopes,
         )
 
     raise AssertionError("Google user account client secret not set")
@@ -76,9 +82,17 @@ def _parse_args(args: Sequence[str], *, prog: str) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog=f"kiari ext {prog}",
         description="Authenticate a Google user account and output its credentials.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""Examples:
+  kiari ext google --google-settings-key hoge
+  kiari ext google \\
+    --scope https://www.googleapis.com/auth/cloud-platform \\
+    --scope https://www.googleapis.com/auth/drive \\
+    --scope https://www.googleapis.com/auth/spreadsheets""",
     )
     # fmt: off
     parser.add_argument("--google-settings-key", default=None, help="kiarina-lib-google settings key. Uses the default key when omitted.")
+    parser.add_argument("--scope", dest="scopes", action="append", default=None, help="OAuth scope. Repeatable. Overrides configured scopes when provided.")
     parser.add_argument("--port", type=int, default=8080, help="Local OAuth callback server port. Default: 8080.")
     # fmt: on
     return parser.parse_args(list(args))
