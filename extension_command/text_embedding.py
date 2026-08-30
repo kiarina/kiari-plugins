@@ -114,7 +114,7 @@ def _create_run_context(
         "agent_id": agent_id,
         "node_id": context.run_options.node_id or agent_id,
         "language": context.run_options.language or "en",
-        "time_zone": context.run_options.time_zone or "UTC",
+        "timezone": context.run_options.timezone or "UTC",
         "currency": context.run_options.currency or "USD",
     }
     run_context_kwargs: dict[str, Any] = {key: value for key, value in values.items() if value}
