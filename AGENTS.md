@@ -59,7 +59,9 @@ kiari 本体の plugin 機構・registry・RunSpec の正典は kiari リポジ�
 
 kiarina は monorepo（uv workspace）ですが、source 指定は `packages/kiarina` の 1 つで
 足ります。uv が checkout から workspace root を見つけ、member 全部を同じ commit から
-解決します。`kiarina-falkordb` だけは member ではないため PyPI のままです。
+解決します。lockfile 上の `kiarina-*` はすべてこの 1 commit から来ます（かつては fork の
+`kiarina-falkordb` だけが member 外で PyPI 由来でしたが、`kiarina-lib-falkordb` が upstream の
+`falkordb` へ切り替えたため、その例外はなくなりました）。
 
 まだ push していない変更を試すときだけ、一時的に `path` source へ差し替えます
 （他マシンでは壊れるので、コミットには含めません）。
