@@ -140,15 +140,13 @@ class FirebaseRTDBCommand(BaseExtensionCommand):
         received_count = 0
 
         try:
-            async for event in watch_data(
+            async for value in watch_data(
                 database_url=options.database_url,
                 path=options.path,
                 stop_event=stop_event,
             ):
                 received_count += 1
-                print(f"event_type: {event.event_type}")
-                print(f"path: {event.path}")
-                print(f"data: {json.dumps(event.data, ensure_ascii=False)}")
+                print(json.dumps(value, ensure_ascii=False, indent=2))
                 print("-" * 20)
 
                 if options.limit is not None and received_count >= options.limit:

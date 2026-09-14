@@ -1121,8 +1121,8 @@ name = "httpcore2"
 version = "2.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "h11" },
-    { name = "truststore" },
+    { name = "h11", marker = "sys_platform != 'emscripten'" },
+    { name = "truststore", marker = "sys_platform != 'emscripten'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/be/ad/f4f0e57345f1870f3e8cb624e058d7eca6e5a27d33bcc3311d9b618734cd/httpcore2-2.12.0.tar.gz", hash = "sha256:9293522bba0aa7c4c8e9e3f040c16575bd8868e155a77fa30c7a9085a5eae648", size = 67548, upload-time = "2026-08-18T13:22:08.211Z" }
 wheels = [
@@ -1489,8 +1489,8 @@ lint = [
 
 [[package]]
 name = "kiarina"
-version = "2.27.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.29.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-audio" },
     { name = "kiarina-agi-base" },
@@ -1534,8 +1534,8 @@ all = [
 
 [[package]]
 name = "kiarina-agi-audio"
-version = "2.15.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-audio&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-audio&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "jaxtyping" },
     { name = "kiarina-agi-base" },
@@ -1565,8 +1565,8 @@ all = [
 
 [[package]]
 name = "kiarina-agi-base"
-version = "2.7.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-base&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-base&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "jaxtyping" },
     { name = "kiarina-currency" },
@@ -1585,7 +1585,7 @@ dependencies = [
 [[package]]
 name = "kiarina-agi-data"
 version = "2.19.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-data&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-data&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "jaxtyping" },
     { name = "kiarina-agi-base" },
@@ -1600,7 +1600,7 @@ dependencies = [
 [[package]]
 name = "kiarina-agi-data-builder"
 version = "2.21.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-data-builder&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-data-builder&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-audio" },
     { name = "kiarina-agi-base" },
@@ -1630,7 +1630,7 @@ all = [
 [[package]]
 name = "kiarina-agi-file"
 version = "2.21.3"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-file&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-file&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-lib-google" },
@@ -1650,7 +1650,7 @@ all = [
 [[package]]
 name = "kiarina-agi-flow"
 version = "2.11.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-flow&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-flow&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1664,8 +1664,8 @@ dependencies = [
 
 [[package]]
 name = "kiarina-agi-image"
-version = "2.21.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-image&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-image&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1695,7 +1695,7 @@ all = [
 [[package]]
 name = "kiarina-agi-runner"
 version = "2.21.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-runner&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-runner&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1713,8 +1713,8 @@ dependencies = [
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.22.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-text&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-text&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1748,7 +1748,7 @@ all = [
 [[package]]
 name = "kiarina-agi-tool"
 version = "2.22.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-tool&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-tool&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
@@ -1762,8 +1762,8 @@ dependencies = [
 
 [[package]]
 name = "kiarina-agi-video"
-version = "2.15.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-video&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-agi-video&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-image" },
@@ -1788,7 +1788,7 @@ all = [
 [[package]]
 name = "kiarina-currency"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-currency&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-currency&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-utils-common" },
@@ -1800,7 +1800,7 @@ dependencies = [
 [[package]]
 name = "kiarina-i18n"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-i18n&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-i18n&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -1811,7 +1811,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-anthropic"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-anthropic&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-anthropic&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -1820,7 +1820,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-cloudflare"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-cloudflare&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-cloudflare&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -1829,7 +1829,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-cloudflare-d1"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-cloudflare-d1&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-cloudflare-d1&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-lib-cloudflare" },
@@ -1839,8 +1839,8 @@ dependencies = [
 
 [[package]]
 name = "kiarina-lib-falkordb"
-version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-falkordb&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-falkordb&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "falkordb" },
     { name = "pydantic-settings" },
@@ -1851,7 +1851,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-firebase"
 version = "2.27.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-utils-common" },
@@ -1864,7 +1864,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-firebase-firestore"
 version = "2.27.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase-firestore&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase-firestore&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-lib-firebase" },
@@ -1875,8 +1875,8 @@ dependencies = [
 
 [[package]]
 name = "kiarina-lib-firebase-rtdb"
-version = "2.27.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase-rtdb&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.29.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-firebase-rtdb&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-lib-firebase" },
@@ -1888,7 +1888,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-google"
 version = "2.8.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-google&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-google&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "google-api-python-client" },
     { name = "pydantic-settings" },
@@ -1898,7 +1898,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-openai"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-openai&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-openai&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -1907,7 +1907,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-redis"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-redis&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-redis&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -1916,8 +1916,8 @@ dependencies = [
 
 [[package]]
 name = "kiarina-lib-redisearch"
-version = "2.17.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-redisearch&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+version = "2.28.0"
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-redisearch&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "numpy" },
     { name = "pydantic" },
@@ -1929,7 +1929,7 @@ dependencies = [
 [[package]]
 name = "kiarina-lib-slack"
 version = "2.3.1"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-slack&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-lib-slack&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -1938,7 +1938,7 @@ dependencies = [
 [[package]]
 name = "kiarina-utils-app"
 version = "2.4.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-app&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-app&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "filelock" },
     { name = "platformdirs" },
@@ -1950,7 +1950,7 @@ dependencies = [
 [[package]]
 name = "kiarina-utils-common"
 version = "2.18.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-common&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-common&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "pydantic" },
 ]
@@ -1958,7 +1958,7 @@ dependencies = [
 [[package]]
 name = "kiarina-utils-file"
 version = "2.17.0"
-source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-file&branch=main#c3846d711e1fd663248acbcea39838ac8cd6d271" }
+source = { git = "https://github.com/kiarina/kiarina-python.git?subdirectory=packages%2Fkiarina-utils-file&branch=main#829f53beac04af5e80b02416d1fa2f7b9294e157" }
 dependencies = [
     { name = "aiofiles" },
     { name = "charset-normalizer" },
@@ -3170,7 +3170,7 @@ name = "pyobjc-framework-cocoa"
 version = "12.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pyobjc-core" },
+    { name = "pyobjc-core", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/75/76/49c6da2c6a831020b4854ba20079d5a1030474bffc776b7b73c2eeff8c15/pyobjc_framework_cocoa-12.2.2.tar.gz", hash = "sha256:c96c0ef69a71afbbb0e6a7d594b455c5fe47d62e0db376ee7a2b4b828c16ace9", size = 3132831, upload-time = "2026-08-11T19:44:02.288Z" }
 wheels = [
@@ -3184,8 +3184,8 @@ name = "pyobjc-framework-quartz"
 version = "12.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pyobjc-core" },
-    { name = "pyobjc-framework-cocoa" },
+    { name = "pyobjc-core", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/35/b1/426a37c7ae37280b3ffca2571fb48f211946aee2f4ca31a603ed1943c4a7/pyobjc_framework_quartz-12.2.2.tar.gz", hash = "sha256:810f97b210cfd93704d240860286dfd6df09f9f1c52525fc5c2166723aea3f9e", size = 3218295, upload-time = "2026-08-11T19:45:15.189Z" }
 wheels = [
