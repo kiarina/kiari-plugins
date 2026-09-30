@@ -112,7 +112,7 @@ def _create_run_context(
         "organization_id": context.run_options.organization_id,
         "user_id": context.run_options.user_id,
         "agent_id": agent_id,
-        "node_id": context.run_options.node_id or agent_id,
+        "runner_id": context.run_options.runner_id,
         "language": context.run_options.language or "en",
         "timezone": context.run_options.timezone or "UTC",
         "currency": context.run_options.currency or "USD",

@@ -9,8 +9,8 @@ license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    "kiari>=0.2.0",
-    "kiarina>=2.27.0",
+    "kiari>=0.5.0",
+    "kiarina>=2.34.0",
 ]
 
 # Per-command dependencies that kiari does not already pull in.
